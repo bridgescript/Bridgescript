@@ -1,0 +1,363 @@
+lib("User32.dll") {
+    ui32 MessageBoxA(ui32, array<ui8>@, array<ui8>@, ui32);
+    //ui16 fn();
+    //ui32 MessageBoxW(ui32, string, string, ui32);
+} mod;
+array<ui8> title @= str2arr("functions.js");
+//mod.MessageBoxA(0, str2arr("0) ref_ff0(GetFoo(1)) + 10 = " + title), title, 0);
+
+//function ui32@ ValByRef(ui32@ val) {
+//    return val + 10;
+//}
+//mod.MessageBoxA(0, "0) ValByRef(20) = " + ValByRef(20),title,0);
+
+function ui32 f(ui64 a0, ui32 a1) {
+    return 1 + a0 + a1;
+}
+function ui32 f1(ui64 a0, ui32 a1) {return 5 + a0 + a1;}
+function ui32 ff0(function<f> fn) {
+    return fn(1, 2) + 10;
+}
+function function<f> GetFoo(ui32 a1) {
+    function<f> local_ref_f;
+    if (a1 == 0) {
+        local_ref_f = f;
+    }
+    else {
+        local_ref_f = f1;
+    }
+    return local_ref_f;
+}
+
+    f(1,2);
+    ff0(f);
+    function<ff0> ref_ff0 = ff0;
+    ui32 res;
+    res = ref_ff0(GetFoo(1)) + 100;
+    
+    mod.MessageBoxA(0, str2arr("0) ref_ff0(GetFoo(1)) + 10 = " + res), title, 0);
+
+    res = ref_ff0(f) + 100;
+    mod.MessageBoxA(0, str2arr("1) ref_ff0(f) + 10 = " + res), title, 0);
+
+    res = ref_ff0(f1) + 100;
+    mod.MessageBoxA(0, str2arr("2) ref_ff0(f1) + 10 = " + res), title, 0);
+
+    function<f> ref_f = f;
+    res = ref_ff0(ref_f) + 100;
+    mod.MessageBoxA(0, str2arr("3) ref_ff0(ref_f) + 10 = " + res), title, 0);
+
+    ref_f = f1;
+    res = ref_ff0(ref_f) + 100;
+    mod.MessageBoxA(0, str2arr("4) ref_ff0(ref_f) + 10 = " + res), title, 0);
+
+    ref_f = GetFoo(0);
+    res = ref_ff0(ref_f) + 100;
+    mod.MessageBoxA(0, str2arr("5) ref_ff0(GetFoo(0)) + 10 = " + res), title, 0);
+
+    ref_f = GetFoo(1);
+    res = ref_ff0(ref_f) + 100;
+    mod.MessageBoxA(0, str2arr("6) ref_ff0(GetFoo(1)) + 10 = " + res), title, 0);
+
+    ref_f = GetFoo(1);
+    res = ref_ff0(GetFoo(1)) + 100;
+    mod.MessageBoxA(0, str2arr("7) ref_ff0(GetFoo(1)) + 10 = " + res), title, 0);
+
+    function function<f> GetFoo1(function<f> fn) {
+        return fn;
+    }
+    res = ref_ff0(GetFoo1(ref_f)) + 100;
+    mod.MessageBoxA(0, str2arr("8) ref_ff0(GetFoo1(ref_f)) + 10 = " + res), title, 0);
+
+    res = ref_ff0(GetFoo1(f)) + 100;
+    mod.MessageBoxA(0, str2arr("9) ref_ff0(GetFoo(f)) + 10 = " + res), title, 0);
+    
+
+        //mod.fn();
+//ui32 bbb;
+//bbb = 1431655765;
+//function bool f(){return true;};
+//function ui32 EmptyFoo(ui16 a0,ui64 a1) { 
+//    return a0 + a1;
+//}
+//struct ABC {
+//    ui8 val8;
+//    function<EmptyFoo> fn;
+//    ui32 val32;
+//} abc;
+//abc.fn = EmptyFoo;
+////abc.fn(5,f());
+///**********************/
+//function<f> f0 = f;
+//f();
+//f0();/*0*/
+//function<EmptyFoo> fn0 = EmptyFoo;
+//fn0(1,f0());/*1*/
+//fn0(1,2);/*2*/
+//string v64 = " v64 ";
+//abc.fn(5,6);/*3*/
+//fn0(1,abc.fn(5,6));/*4*/
+//mod.MessageBoxA(0, v64 + "abc.fn(5,6) = " + abc.fn(5,6),0,0);/*5*/
+
+//function<EmptyFoo> emptyFoo = EmptyFoo;
+
+//function ui32 Foo0(ui16 a0,ui64 a1) { 
+//    //return bbb + 1.2e+4 + a1 * a1 + emptyFoo(a0,a1);// / EmptyFoo(a0 + 1, a1 -3);
+//    ui32 res = emptyFoo(22,33) + bbb + 1.2e+4 + a1 * a1;// + emptyFoo(a0,a1);// / EmptyFoo(a0 + 1, a1 -3);
+//    mod.MessageBoxA(0,"***Foo0(" + a0 +"," + a1 +") = " + res,0,0);
+//    return res;
+//}
+//ui32 res = Foo0(10, 20);
+
+//abc.fn = Foo0;
+
+//mod.MessageBoxA(0,"abc.fn(5,6) = " + abc.fn(5,6),0,0);
+
+//mod.MessageBoxA(0,"emptyFoo == EmptyFoo: res = Foo0(10,20)" + res,0,0);
+
+//mod.MessageBoxA(0,"emptyFoo == EmptyFoo: emptyFoo(30,40)" + emptyFoo(30,40),0,0);
+
+//function ui32 FooWithFooArg(function<EmptyFoo> argFoo, ui16 a0,ui64 a1) { 
+//    return a0 + a1 + argFoo(a0, a1);
+//}
+
+//mod.MessageBoxA(0,"FooWithFooArg(emptyFoo,100,200): res = " + FooWithFooArg(emptyFoo,100,200), 0,0);
+
+//function<FooWithFooArg> fooWithFooArg = FooWithFooArg;
+
+//mod.MessageBoxA(0,"fooWithFooArg(emptyFoo,100,200): res = " + fooWithFooArg(emptyFoo,100,200), 0,0);
+
+//function ui32 AnotherFoo(ui16 a0, ui64 a1) { 
+//    ui16 value = 456;
+//    bool bv = true;
+//    return bbb / value;
+//}
+//emptyFoo = AnotherFoo;
+//mod.MessageBoxA(0,"emptyFoo == AnotherFoo: res = " + emptyFoo(1000,2000), 0,0);
+//emptyFoo = Foo0;
+//mod.MessageBoxA(0,"emptyFoo == Foo0: res = " + emptyFoo(1000,2000), 0,0);
+    
+    //function<F_0> f_0 = F_0X;
+//f_0(2 + 3,3);
+    //tv0.v1 = 5;
+//mod.MessageBoxA(0,"test: F_0(1,2):" + F_0(1,2),0,0);
+//mod.MessageBoxA(0,"test: f_0(2,3):" + f_0(2,3),0,0);
+
+//function function<F_0> F_1(ui16 a0, ui64 a1){ 
+//    function<F_0> f_1;
+//    return f_1;//F_0(1,1);
+//    //return 1;
+//    //return a0 = a1 - 4;
+//}
+
+//    f_0 = F_1(1,2);// + f_0(2,3);
+
+//function function<F_0> F_2(ui16 a0, function<F_1> a1) { 
+//    return f_0;
+//}
+/**********************/
+////include "const.js";
+////ui16 i;
+//ui8 i = 9;
+////i += 9;
+//struct Type0 {
+//    bool v0;
+//    ui64 v1;
+//};
+//Type0 tv0;
+//tv0.v0 = true;
+//tv0.v1 = 612313213;
+
+//function ui32 fooNew(ui16 arg0, Type0 arg1) {
+//    arg1.v0 = true;
+//    arg1.v1 = arg1.v1 + arg0 + 20;
+//    return arg1.v1;//fA1(v);
+//}
+//function<fooNew> myFoo; // function reference
+//ui32 res0 = myFoo(1 + i; tv0);
+//ui32 res = fooNew(3 + i, tv0);
+////function fA1(vv) {
+////    return vv;
+////}
+
+////bool cb = true;
+////const0 = "some value";
+////const2 = 123;
+//lib mod("User32.dll"), test("kernel32.dll");
+//tv0.v1 = 5;
+//mod.MessageBoxA(0,"test: " + res + ", " + fooNew(20, tv0),0,0);
+
+////offset:,size:,padding:
+//struct Sub0 {
+//    ui16 val00/*o:0,s:2,p:0*/, val01/*o:2,s:2,p:4*/;
+//    struct Sub1 {
+//        ui32 val10/*o:0,s:4,p:4*/;
+//        struct Sub2 {
+//            bool b20/*o:0,s:1,p:7*/;
+//            ui64 v21/*o:8,s:8,p:0*/;
+//        } val11/*o:16,s:16 -> sizeof(Sub2),p:0*/,
+//          val12/*o:32,s:16 -> sizeof(Sub2),p:0*/;
+//    } ff/*o:8,s:40 -> sizeof(Sub1),p:0*/;
+//    Sub1 val2/*o:48,s:40 -> sizeof(Sub1),p:0*/;
+//    Sub1 val3/*o:88,s:40 -> sizeof(Sub1),p:0*/;
+//} a/*o:0,s:128 -> sizeof(Sub0),p*/;
+//a.val3.val12.v21 = 111;
+//fA(cb);
+//////b.val1 = 1;
+////Sub0 i;
+//for (i = 0;i < 8;++i) {
+//    //t = "test" + ": " + 0.123e+12 * i;
+//    string text;
+    
+//    switch (i) {
+//        case 0:
+//            text = "case " + i;
+//            break;
+//        case 1:
+//        case 2:
+//            text = "case " + i;
+//            break;
+//        case 3:
+//            text = "case " + i;
+//            break;
+//        case 4:
+//            text = "case " + i;
+//            break;
+//        default:
+//            text = "default";
+//            break;
+//    }
+//    mod.MessageBoxA(0,foo(i) + "\n\n ! ! ! ! ! !\n" + a.val3.val12.v21 * i, text, i | 32);
+//}
+
+//function foo(i) {
+//    return foo0(i);
+//}
+//function foo0(i) {
+//    return foo1(i);
+//}
+//function foo1(i) {
+//    return "test: " + i + ") " + 0.123e+42 * 4.0056e+10;
+//}
+
+/*
+bool b = true, b1 = false & b0;
+ui8 bi = 10 & 9; // == (1010 & 1001 = 8)
+ui8 i0 = 1, i1 = 2, i2 = 3;
+bool bb = 4; ui64 v64 = 5;
+
+function f0(argf0) {
+    //argf0 == (1+2 = 3)
+    ui8 i0 = 6;
+    ui16 i = argf0 + i0;
+    argf0 = i;
+    return f1(argf0);
+}
+function f1(argf1) {
+    //argf1 == (3+6 = 9)
+    float v64 = 5.023 + argf1;
+    return v64; // == (9+5.023 = 14.023)
+}
+ui64 ret = f0(i0 + 2);
+*/
+/*
+i += 2;
+switch (i) {
+    case 0:
+    case 1:
+        ;
+    default:
+        i = 3 + 4 * 10;
+    case 2:
+        break;
+}
+arg0 = i - 1;
+arg1 = 2;
+ret = foo(arg0, arg1 + 3);
+*//*
+a = b + c;
+test();
+{ a = b + c; }
+test1(a);
+test2(a, b);
+testFoo(a(), b(a+d,s), a);
+test3(a + b - c * 23 / 45);
+test4((a(s, d) + b) - c * (23 / 45));
+test5(a + b - c * 23 / 45, d - ff);
+*/
+/*
+function foo(a0, a1) {
+    v0 = a0 + 4;
+    v1 = v0 * 5;
+    switch (i) {
+        case 0:
+        case 1:
+            ;
+        default:
+            return ;
+        case 2:
+            break;
+    }
+    return a1 + a0 + v1;
+}*/
+/*if (s == 3); else a = "ss";
+if (s < f)
+{ while (w != 0) for (; ;) w = w - 1; }
+else
+    d = f * e / e;
+    */
+//++w;
+//f(a+d,d);
+//x = 2 * y + (d & f * g) & (s & d + f);
+//x = (x * (a + b) + (c) * (c /d));
+/*c = a + (b + d * d / (s & (e-d)));
+res = v0 + v1 - v2 + v3 * v5 + (v6 - v7 * v8 * v9 / v11);
+c = a + test0();
+*/
+//while (s + 1) for (; ;) while (i == 3); { i += (1 + 2); };
+//for (;;) while(20) break;// { };
+//while (foo(f * d)) s = d; { }
+
+//for (w >= 3; ;) {
+//        ;
+//}
+  //while (a < 3);
+//while (a < 3) x = y;
+//while (a < 3) {; x = y;
+//    d = s + d * f / f;
+//}
+/*
+case "":
+    break;
+default:
+    break;
+    while() {break;}
+    while()break;//?
+    for() {break;}
+*/
+        //while (a + b - c) {
+        //    if (sd + s) {
+
+        //    }
+        //}
+        /*
+        function foo0() {}
+        
+        function foo1(arg0, arg1, arg2) {
+        }
+        
+        {
+            function foo2(arg0) {
+                return 0;
+            }
+        }
+        */
+        //f(1, a+3, 3);
+        //while(f()) f();
+        //for (a = 1; fr(a + d, fq(s, d, f)) ; a += 1) s(); { c = s; }
+        /*for (a = 1; a < 45; a += 1) {
+            test3(a + b - c * 23 / 45);
+            while (f(s+f)*foo(f*d)) {
+                x = 2 * y + (d & f * g) & (s & d + f);
+            };
+        }*/

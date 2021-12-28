@@ -1,0 +1,635 @@
+//include "lib.js";
+include "console.bridge";
+
+Console_Init();
+
+lib ("testdll.dll") {
+    //TestStruct SetGetStruct(TestStruct);
+    ui32 CallbackInt64Int32(ui64, ui32);
+    i32 Print(string);
+} test;
+
+function ui32 TestFoo0(ui32 a0) {
+    Console_Write("TestFoo0(a0=" + a0 + ")\n");
+    return 0;
+}
+function ui32 TestFoo(ui32 a0) {
+    Console_Write("a0=" + a0 + "\n");
+    return a0 + 200; 
+}
+function ui32 PassFooRef(function<TestFoo> f) {
+    f = TestFoo0;
+    return f(100);
+}
+function ui32 PassFooRef0(function<TestFoo>@ f) {
+    f = TestFoo0;
+    return f(200);
+}
+function ui32 PassFooRef1(function<TestFoo>@@ f) {
+    f = TestFoo0;
+    return f(300);
+}
+ 
+function<TestFoo> fn, fn0;
+//ui8 v0 = 10;
+fn = TestFoo;
+Console_Write("PassFooRef=" + PassFooRef0(TestFoo) + "\n");
+Console_Write("PassFooRef=" + PassFooRef0(fn) + "\n");
+fn(1);
+    //fn(1000);
+//fn0 @= TestFoo;
+//fn0(222);
+//v0 = TestFoo(v0);
+//Console_Write("v0=" + v0 + "\n");
+ 
+//ui32 v1 = 100;
+//v1 @= v1 + 1;
+//function ui32 Foo(ui32 a0, ui32@ a1, ui32@@ a2, ui32@ a3) {
+//    ui32 v0 = a0 + 100;
+//    ui32 v1 = 555;
+//    a1 = 300;
+//    a2 @= a3;
+//    return v0;
+//}
+//ui32 v2, v3, v4 = 400;
+//Console_Write("v1=" + v1 + ", v2=" + v2 + ", v3=" + v3 + ", v4=" + v4 + "\n");
+//v1 = Foo(v1, v2, v3, v4);
+//Console_Write("v1=" + v1 + ", v2=" + v2 + ", v3=" + v3 + ", v4=" + v4 + "\n");
+//v4 = 600;
+//Console_Write("v1=" + v1 + ", v2=" + v2 + ", v3=" + v3 + ", v4=" + v4 + "\n");
+ 
+function ui32 PassByRefRef(ui32@@ RefRef, ui32@ Ref) {
+    Console_Write("PassByRefRef(RefRef=" + RefRef + ", Ref="+Ref+")\n");
+    RefRef @= Ref;
+    Console_Write("PassByRefRef(RefRef=" + RefRef + ", Ref="+Ref+")\n");
+    return RefRef;
+}
+ui32 v0 = 10, v1 = 20;
+ui32 v2 @= v0; 
+Console_Write("v0=" + v0 + ", v1="+v1+ ", v2=" + v2 + "\n");
+
+ui32 res @= PassByRefRef(v0, v1);
+
+Console_Write("v0=" + v0 + ", v1=" + v1 + ", v2=" + v2 + ", res=" +res +"\n");
+v1 = 100;
+Console_Write("v0=" + v0 + ", v1="+v1+ ", v2=" + v2 + ", res=" +res + "\n");
+
+//Console_Write("res=" +res + ", v=" + v + ", v1=" + v1 + "\n");
+//v1 = 333;
+//Console_Write("v=" + v + ", v1=" + v1 + "\n");
+//v = 111;
+//Console_Write("v=" + v + ", v1=" + v1 + "\n");
+/*
+lib ("testdll.dll") {
+    i32 Print(string);
+} test;
+function ui32@ GetRef() {
+    ui32 i = 10;
+    return i;
+}
+function ui32@ PassValue(ui32 val, ui32@ ref) {
+    Console_Write("PassValue(val=" + val +", ref="+ref+")\n");
+    //ref = val;
+    //Console_Write("PassValue(val=" + val +", ref="+ref+")\n");
+    ui32 v32 = 123;
+    ref = 1000000;
+    ref += v32 + 1000;
+    Console_Write("PassValue:: ref=" + ref + "\n");
+    //ref = v32;
+    Console_Write("PassValue:: v32=" + v32 +", ref=" + ref + "\n");
+    return ref;
+}
+function ui32 PassIn(ui32@ v) {
+    Console_Write("PassIn:: v=" + v + "\n");
+    v++++;
+    return v;
+}
+Console_Write("v=" +v +"\n");
+ui32 byRef @= PassValue(20, v);
+ui32 res = v;
+Console_Write("v=" +v +"\n");
+Console_Write("byRef=" +byRef +"\n");
+Console_Write("res=" +res +"\n");
+res /= 100;
+Console_Write("v=" +v +"\n");
+Console_Write("PassIn(res=" + res + ") = " + PassIn(res) +"\n");
+Console_Write("res=" +res +"\n");
+Console_Write("v=" +v +"\n");
+ui32 val = 2;
+byRef @= val;
+Console_Write("byRef=" +byRef +"\n");
+Console_Write("v=" +v +"\n");
+*/
+/*1
+struct TestStruct {
+    //i32 l0;
+    //i32 l1;
+    //bool b0;
+    //i64 ll;
+    //double d;
+    //bool b1;
+    //i32 l2;
+    struct Sub {
+        bool b0;
+        i64 ll;
+        double d;
+    } subSt;
+    double v0;
+    i16 v1;
+    ui64 v2;
+    i8 v3;
+} testStruct;
+ 
+struct CharCharCharChar {
+    i8 v0;
+    i8 v1;
+    i8 v2;
+    i8 v3;
+} st1111;
+ 
+struct CharShortCharShort {
+    i8 v0;
+    i16 v1;
+    i8 v2;
+    i16 v3;
+} st1212;
+ 
+function CharCharCharChar SetGet1111(CharCharCharChar v) {
+    string s = "SetGet1111()\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    v.v0 += 1;
+    v.v1 += 1;
+    v.v2 += 1;
+    v.v3 += 1;
+    s = "SetGet1111(+=1)\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    return v;
+}
+ 
+function CharCharCharChar _SetGet1111(CharCharCharChar v) {
+    string s = "_SetGet1111()\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    v.v0 += 1;
+    v.v1 += 1;
+    v.v2 += 1;
+    v.v3 += 1;
+    s = "_SetGet1111(+=1)\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    return v;
+}
+function CharCharCharChar __SetGet1111(CharCharCharChar v) {
+    string s = "__SetGet1111()\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    v.v0 += 1;
+    v.v1 += 1;
+    v.v2 += 1;
+    v.v3 += 1;
+    s = "__SetGet1111(+=1)\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    return v;
+}
+ 
+function CharShortCharShort SetGet1212(CharShortCharShort v) {
+    string s = "SetGet1212()\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    v.v0 += 10;
+    v.v1 += 10;
+    v.v2 += 10;
+    v.v3 += 10;
+    s = "SetGet1212( +=10 )\nv.v0=" + v.v0 + "\n";
+    s += "v.v1=" + v.v1 + "\n";
+    s += "v.v2=" + v.v2 + "\n";
+    s += "v.v3=" + v.v3 + "\n";
+    Console_Write(s);
+    return v;
+}
+ 
+function TestStruct SetGetTestStruct(TestStruct v) {
+v.v0 *= 10000;
+v.v1 *= 10;
+v.v2 *= 10;
+v.v3 *= 10;
+v.subSt.b0 = false;
+v.subSt.ll = 100;
+v.subSt.d /= 100000;
+string s = "v.v0=" + v.v0 + "\n";
+s += "v.v1=" + v.v1 + "\n";
+s += "v.v2=" + v.v2 + "\n";
+s += "v.v3=" + v.v3 + "\n";
+s += "v.subSt.b0=" + v.subSt.b0 + "\n";
+s += "v.subSt.ll=" + v.subSt.ll + "\n";
+s += "v.subSt.d=" + v.subSt.d + "\n";
+Console_Write(s);
+return v;
+}
+ 
+lib ("testdll.dll") {
+    i32 Print(string);
+    TestStruct SetGetStruct(TestStruct);
+    ui32 CallbackInt64Int32(ui64, ui32);
+    TestStruct CallScriptSetGetTestStruct(function<SetGetTestStruct>);
+    CharShortCharShort SetGet1212(CharShortCharShort);
+    CharCharCharChar SetGet1111(CharCharCharChar);
+    CharCharCharChar CallScriptSetGet1111(function<SetGet1111>);
+    CharShortCharShort CallScriptSetGet1212(function<SetGet1212>);
+    CharShortCharShort@ Get1212Ref();
+    function<SetGet1111> ReturnScriptSetGet1111(function<SetGet1111>);
+    function<SetGet1111>@ ReturnRefScriptSetGet1111(function<SetGet1111>@);
+    ui32 GetByRefSetGet1111(ui32,CharShortCharShort,ui32@,CharShortCharShort@,ui32@@,CharShortCharShort@@,function<SetGet1111>,function<SetGet1111>@,function<SetGet1111>@@);
+} test;
+    
+    function<SetGet1111> dllFoo;// = SetGet1111;
+    dllFoo(st1111);
+    ui32 valIn = 88;
+    st1212.v0 = 1;
+    st1212.v1 = 2;
+    st1212.v2 = 3;
+    st1212.v3 = 4;
+    Console_Write("\n******** before GetByRefSetGet1111() ************\n");
+    Console_Write("valIn=" + valIn + "\n");
+    test.GetByRefSetGet1111(valIn, st1212,valIn, st1212, valIn, st1212, SetGet1111, _SetGet1111, dllFoo);//__SetGet1111);
+    Console_Write("valIn=" + valIn + "\n");
+    Console_Write("\n******** after GetByRefSetGet1111() ************\n");
+    st1111 = dllFoo(st1111);
+    Console_Write("\n******** after dllFoo() ************\n");
+ 
+    function<SetGet1111> fnSetGet1111 = test.ReturnScriptSetGet1111(SetGet1111);
+        st1111.v0 = 10;
+        st1111.v1 = 20;
+        st1111.v2 = 30;
+        st1111.v3 = 40;
+        st1111 = fnSetGet1111(st1111);
+        function<SetGet1111> _fnSetGet1111 @= fnSetGet1111;
+        fnSetGet1111 = _SetGet1111;
+        st1111 = _fnSetGet1111(st1111);
+ 
+    Console_Write("\n********************\n");
+    function<SetGet1111> fnRefSetGet1111 @= test.ReturnRefScriptSetGet1111(SetGet1111);
+        st1111 = fnRefSetGet1111(st1111);
+        SetGet1111(st1111);
+    Console_Write("\n********************\n");
+ 
+    CharShortCharShort dllSt @= test.Get1212Ref();
+    Console_Write("\n1)dllSt = test.Get1212Ref();\n");
+    Console_Write("dllSt.v0=" + dllSt.v0 + "\n");
+    Console_Write("dllSt.v1=" + dllSt.v1 + "\n");
+    Console_Write("dllSt.v2=" + dllSt.v2 + "\n");
+    Console_Write("dllSt.v3=" + dllSt.v3 + "\n");
+    dllSt.v0 *= 10 + 1;
+    dllSt.v1 = 22;
+    dllSt.v2 = 33;
+    dllSt.v3 = 44;
+    dllSt = test.Get1212Ref();
+    Console_Write("\n2)dllSt = test.Get1212Ref();\n");
+    Console_Write("dllSt.v0=" + dllSt.v0 + "\n");
+    Console_Write("dllSt.v1=" + dllSt.v1 + "\n");
+    Console_Write("dllSt.v2=" + dllSt.v2 + "\n");
+    Console_Write("dllSt.v3=" + dllSt.v3 + "\n\n");
+ 
+    st1111.v0 = 1;
+    st1111.v1 = 2;
+    st1111.v2 = 3;
+    st1111.v3 = 4;
+    Console_Write("\nbefore: st1111 = test.SetGet1111(st1111);\n");
+    Console_Write("st1111.v0=" + st1111.v0 + "\n");
+    Console_Write("st1111.v1=" + st1111.v1 + "\n");
+    Console_Write("st1111.v2=" + st1111.v2 + "\n");
+    Console_Write("st1111.v3=" + st1111.v3 + "\n");
+    st1111 = test.SetGet1111(st1111);
+    Console_Write("after:\n");
+    Console_Write("st1111.v0=" + st1111.v0 + "\n");
+    Console_Write("st1111.v1=" + st1111.v1 + "\n");
+    Console_Write("st1111.v2=" + st1111.v2 + "\n");
+    Console_Write("st1111.v3=" + st1111.v3 + "\n");
+ 
+    st1212.v0 = 1;
+    st1212.v1 = 2;
+    st1212.v2 = 3;
+    st1212.v3 = 4;
+    Console_Write("\nbefore: st1212 = test.SetGet1212(st1212);\n");
+    Console_Write("st1212.v0=" + st1212.v0 + "\n");
+    Console_Write("st1212.v1=" + st1212.v1 + "\n");
+    Console_Write("st1212.v2=" + st1212.v2 + "\n");
+    Console_Write("st1212.v3=" + st1212.v3 + "\n");
+    st1212 = test.SetGet1212(st1212);
+    Console_Write("after:\n");
+    Console_Write("st1212.v0=" + st1212.v0 + "\n");
+    Console_Write("st1212.v1=" + st1212.v1 + "\n");
+    Console_Write("st1212.v2=" + st1212.v2 + "\n");
+    Console_Write("st1212.v3=" + st1212.v3 + "\n");
+ 
+    Console_Write("\nbefore: st1111 = test.CallScriptSetGet1111(SetGet1111);\n");
+    Console_Write("st1111.v0=" + st1111.v0 + "\n");
+    Console_Write("st1111.v1=" + st1111.v1 + "\n");
+    Console_Write("st1111.v2=" + st1111.v2 + "\n");
+    Console_Write("st1111.v3=" + st1111.v3 + "\n");
+    st1111 = test.CallScriptSetGet1111(SetGet1111);
+    Console_Write("after:\n");
+    Console_Write("st1111.v0=" + st1111.v0 + "\n");
+    Console_Write("st1111.v1=" + st1111.v1 + "\n");
+    Console_Write("st1111.v2=" + st1111.v2 + "\n");
+    Console_Write("st1111.v3=" + st1111.v3 + "\n");
+ 
+    st1212.v0 = 1;
+    st1212.v1 = 2;
+    st1212.v2 = 3;
+    st1212.v3 = 4;
+    Console_Write("\nbefore: st1212 = test.CallScriptSetGet1212(SetGet1212);\n");
+    Console_Write("st1212.v0=" + st1212.v0 + "\n");
+    Console_Write("st1212.v1=" + st1212.v1 + "\n");
+    Console_Write("st1212.v2=" + st1212.v2 + "\n");
+    Console_Write("st1212.v3=" + st1212.v3 + "\n");
+    st1212 = test.CallScriptSetGet1212(SetGet1212);
+    Console_Write("after:\n");
+    Console_Write("st1212.v0=" + st1212.v0 + "\n");
+    Console_Write("st1212.v1=" + st1212.v1 + "\n");
+    Console_Write("st1212.v2=" + st1212.v2 + "\n");
+    Console_Write("st1212.v3=" + st1212.v3 + "\n");
+ 
+testStruct.v0 = -1.023456e-22;
+testStruct.v1 = 2;
+testStruct.v2 = 3;
+testStruct.v3 = 4;
+testStruct.subSt.b0 = true;
+testStruct.subSt.ll = 10;
+testStruct.subSt.d = 123.0e-22;
+Console_Write("\nbefore:\n");
+Console_Write("testStruct.v0=" + testStruct.v0 + "\n");
+Console_Write("testStruct.v1=" + testStruct.v1 + "\n");
+Console_Write("testStruct.v2=" + testStruct.v2 + "\n");
+Console_Write("testStruct.v3=" + testStruct.v3 + "\n");
+Console_Write("testStruct.subSt.b0=" + testStruct.subSt.b0 + "\n");
+Console_Write("testStruct.subSt.ll=" + testStruct.subSt.ll + "\n");
+Console_Write("testStruct.subSt.d=" + testStruct.subSt.d + "\n");
+struct MyStruct {
+    bool b;
+    TestStruct st;
+    ui8 v0;
+} stEx;
+stEx.st.v0 = 9.999;
+stEx.st.v1 = 6;
+stEx.st.v2 = 5;
+stEx.st.v3 = 4;
+stEx.st.subSt.b0 = true;
+stEx.st.subSt.ll = 5555555555;
+stEx.st.subSt.d = -1.000001e-11;
+testStruct = test.SetGetStruct(stEx.st);
+Console_Write("\ntest.SetGetStruct(stEx.st):\n");
+Console_Write("testStruct.v0=" + testStruct.v0 + "\n");
+Console_Write("testStruct.v1=" + testStruct.v1 + "\n");
+Console_Write("testStruct.v2=" + testStruct.v2 + "\n");
+Console_Write("testStruct.v3=" + testStruct.v3 + "\n");
+Console_Write("testStruct.subSt.b0=" + testStruct.subSt.b0 + "\n");
+Console_Write("testStruct.subSt.ll=" + testStruct.subSt.ll + "\n");
+Console_Write("testStruct.subSt.d=" + testStruct.subSt.d + "\n\n");
+ 
+ 
+//testStruct = test.SetGetStruct(testStruct);
+//testStruct = SetGetTestStruct(testStruct);
+ 
+testStruct = test.CallScriptSetGetTestStruct(SetGetTestStruct);
+ 
+Console_Write("\nafter:\n");
+Console_Write("testStruct.v0=" + testStruct.v0 + "\n");
+Console_Write("testStruct.v1=" + testStruct.v1 + "\n");
+Console_Write("testStruct.v2=" + testStruct.v2 + "\n");
+Console_Write("testStruct.v3=" + testStruct.v3 + "\n");
+Console_Write("testStruct.subSt.b0=" + testStruct.subSt.b0 + "\n");
+Console_Write("testStruct.subSt.ll=" + testStruct.subSt.ll + "\n");
+Console_Write("testStruct.subSt.d=" + testStruct.subSt.d + "\n");
+1*/
+/*
+struct MyStruct {
+    bool b;
+    struct SubStruct {
+        ui32 v32;
+        bool b;
+        i64 v64;
+    } st;
+    i32 v32;
+    string s;
+} g_st;
+g_st.st.b = true;
+g_st.st.v32 = 10000;
+g_st.st.v64 = -123456789000;
+g_st.b = true;
+g_st.v32 = 5;
+g_st.s = "This is a test string!";
+ 
+Console_Write("g_st.b=" + g_st.b + "\n");
+++++g_st.st.v32;
+Console_Write("g_st.st.v32=" + g_st.st.v32 + "\n");
+Console_Write("g_st.st.b=" + g_st.st.b + "\n");
+Console_Write("g_st.st.v64=" + g_st.st.v64 + "\n");
+Console_Write("g_st.v32=" + g_st.v32 + "\n");
+Console_Write("g_st.s=" + g_st.s + "\n");
+Console_Write(g_st.s);
+*/
+/*
+ui32 global = 100, v32 = 200;
+function ui32 foo32(ui8 v8, ui32 a0) {
+    ui32 v = (a0 + 3);
+    Console_Write("v = " + v + " a0= " + a0);
+    return ------v;
+}
+ 
+i32 res = 100;
+res -= foo32(++++++++++v32 - 4 *5, --v32);
+Console_Write("res = " + --------res + " v32 = " + v32);
+ 
+ 
+i32 vv32 = 0;
+//while (----vv32) --vv32;// + vv32;
+ 
+//ui32 val0 = vv32++ - --vv32---- * foo32(--vv32) + foo32(vv32++);
+*/
+/*
+switch (++++++vv32) {
+    case 0:vv32--;
+        break;
+    default:----vv32--;
+        break;
+}
+*/
+/*
+if(((----vv32))) ++++vv32;// else --vv32;
+else vv32 = ++vv32;
+for (vv32 = 1; vv32 < 3; ((((++vv32))))) {
+    mod.MessageBoxA(0,  "for() vv32 = " + vv32, "functions.js", 0);
+    }
+ 
+mod.MessageBoxA(0,  "vv32 = " + vv32, "functions.js", 0);
+ 
+//mod.MessageBoxA(0,  "if(vv32) = " + vv32, "functions.js", 0);
+*/
+/*
+for (vv32 = 0;vv32<3;++vv32) ++vv32--;
+ 
+while (++vv32--) --vv32++;
+ 
+double d = -12.234e-6 + 1 * ~12;
+ui32 v32 = foo32(0);
+i8 u8++ = --++v32-- *foo32(0);
+string str = ~~!!false;
+//i32 a0 = ++u8;
+//i32 a0 = 2 + u8-- + 2 * ~4 + 1;
+i32 a1 = 10, al1 = 2, ar1 = 3 + foo32() ;//u8--;
+//ar1 += 1;
+i32 a0 = al1 * (ar1++ + d + a1 * 23) * 100 / (30 + (20 - 12)) *33;
+//ui32 a0 = (20 - 12) *33;
+ 
+//ui32 a0 = al1 * ar1 + a1 *= 3;
+ 
+for (u8 = 0; u8 < 3; ++u8){
+    mod.MessageBoxA(0,  str + " a = " + a0 + " u8 = "+ u8, "functions.js", 0);
+}
+*/
+ 
+/*
+//++10;// bad
+//++(20 + 1);// bad
+ui32 v0 = 10;
+i8 v1 = -1;
+//++(v0 + 1);// bad
+//++v0; // good
+//v0 += 10;//good
+//v0 += (10 + 1);//good
+//v0 += (v0 + 1);//good
+//v0 += (v1 + 1);//good
+ 
+function function<foo32> foo32_foo32() {
+    return foo32;
+}
+//ui32 v32_0 = 10;
+//ui32 v32 = v32_0 * 3;
+ 
+function<foo32> v_foo32 = foo32_foo32();
+//function<foo32> v0_foo32 = ++v_foo32;// bad
+//function<foo32> v0_foo32 = ++v_foo32();// bad
+//function<foo32> v0_foo32 = ++foo32_foo32;// bad
+//function<foo32> v0_foo32 = ++foo32_foo32();// bad
+//function<foo32> v0_foo32 += v_foo32;// bad
+//function<foo32> v0_foo32 += v_foo32();// bad
+//function<foo32> v0_foo32 += foo32_foo32;// bad
+//function<foo32> v0_foo32 += foo32_foo32();// bad
+    //v0 += foo32();// good
+    //v0 += foo32;//bad
+    //v0 += v_foo32;//bad
+ 
+function ui8 ByRef(ui32@ a0, ui16@ a1) {
+    ui32 v32 = a0;// += foo32();
+    a0 += foo32();// - v32 + a1;
+    return a1;
+}
+ui32 a = 1 + 2;
+struct test { 
+    ui32 v32;
+    struct test_0 {
+        bool b;
+        ui64 v64;
+    } st;
+    ui8 v8;
+} st;
+st.v8 = a;
+*/
+/*
+Console_Write("a = " + a);
+a = a * 3 + st.v8;
+Console_Write("a = " + a);
+float f = 1.2345;
+Console_Write("f = " + f);
+f = f + a;
+Console_Write("f = " + f);
+double d = 1.8e-23 * f;
+Console_Write("d = " + d);
+a = f;
+string s = d;
+function ui32@ ValByRef0(ui32@ val0, ui32 val1) {
+    ui32 res = val0 + 10 + val1;
+    return res;
+}
+function ui32@ ValByRef1(ui32@ val) {
+    return ValByRef0(val + 10, 100);
+}
+ui32 res = ValByRef0(20, 10);
+Console_Write(("d = " + d) + " f = " + f);
+ 
+//res = ValByRef1(20);
+Console_Write("0) ValByRef0(20, 10) = "+ d + " " + res + ValByRef0(20 + res * res, 10 - res / 3));
+*/
+ 
+ 
+function ui32 f(ui64 a0, ui32 a1) {return 1 + a0 + a1;}
+function ui32 f1(ui64 a0, ui32 a1) {return 5 + a0 + a1;}
+function ui32 ff0(function<f> fn) {return fn(1, 2) + 10;}
+    f(1,2);
+    ff0(f);
+    function<ff0> ref_ff0 = ff0;
+    res = ref_ff0(f) + 100;
+    Console_Write("1) ref_ff0(f) + 10 = " + res +"\n");
+ 
+    res = ref_ff0(f1) + 100;
+    Console_Write("2) ref_ff0(f1) + 10 = " + res +"\n");
+ 
+    function<f> ref_f = f;
+    res = ref_ff0(ref_f) + 100;
+    Console_Write("3) ref_ff0(ref_f) + 10 = " + res +"\n");
+ 
+    ref_f = f1;
+    res = ref_ff0(ref_f) + 100;
+    Console_Write("4) ref_ff0(ref_f) + 10 = " + res +"\n");
+ 
+    function function<f> GetFoo(ui32 a1) {
+        function<f> local_ref_f;
+        if (a1 == 0) {
+            local_ref_f = f;
+        }
+        else {
+            local_ref_f = f1;
+        }
+        return local_ref_f;
+    }
+ 
+    ref_f = GetFoo(0);
+    res = ref_ff0(ref_f) + 100;
+    Console_Write("5) ref_ff0(GetFoo(0)) + 10 = " + res +"\n");
+ 
+    ref_f = GetFoo(1);
+    res = ref_ff0(ref_f) + 100;
+    Console_Write("6) ref_ff0(GetFoo(1)) + 10 = " + res +"\n");
+ 
+    //ref_f = GetFoo(1);
+    res = ref_ff0(GetFoo(1)) + 100;
+    Console_Write("7) ref_ff0(GetFoo(1)) + 10 = " + res +"\n");
+ 
+    function function<f> GetFoo1(function<f> fn) {
+        return fn;
+    }
+    res = ref_ff0(GetFoo1(ref_f)) + 100;
+    Console_Write("8) ref_ff0(GetFoo1(ref_f)) + 10 = " + res +"\n");
+ 
+    res = ref_ff0(GetFoo1(f)) + 100;
+    Console_Write("9) ref_ff0(GetFoo(f)) + 10 = " + res +"\n");
+  
+ Console_Term();

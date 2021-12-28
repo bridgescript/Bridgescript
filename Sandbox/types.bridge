@@ -1,0 +1,59 @@
+struct Test {
+    bool b;
+    ui64 v64;
+    struct A {
+        ui64@ v0,v1;
+        ui8 v2;
+        //function<BooFoo> fn;
+    } a;
+    array<A@,2>@ arr;
+} t;
+array<Test@,2> arr0;
+arr0[0].v64 = 100;
+arr0[1].v64 = 200;
+arr0[0].arr[0].v0 = 1000;
+arr0[0].arr[1].v0 = 2000;
+arr0[1].arr[0].v0 = 1100;
+arr0[1].arr[1].v0 = 2200;
+arr0[0].a.v0 = 1999;
+arr0[1].a.v0 = 2999;
+/*struct ST {
+    struct Sub {
+        array<ui32@,2> arr;
+        ui8@ v8;
+        ui64 v64;
+    };
+    Sub  sb1;
+    Sub@ sb0;
+} st;
+st.sb0.arr[1] = 0xAAAAAAAA;
+st.sb0.arr[0] = 0xBBBBBBBB;
+st.sb0.arr[0] = 1;*/
+/*struct ST {
+    struct Sub {
+        array<ui32@,2> arr;//1
+        ui8@ v0;//2
+        ui64 v1;//3
+    };
+    Sub sb0;
+    Sub@ sb1;
+    ui32 val;
+    ui64@ val64; 
+    array<Sub@, 1> a0;
+    array<Sub, 1> a1;
+} st;
+ 
+st.sb0.arr[0] = 1;
+st.sb0.v0 = 2;
+st.sb0.v1 = 3;
+ 
+st.sb1.arr[0] = 4;
+ 
+st.val = 5;
+st.val64 = 6;
+ 
+st.a0[0].arr[1] = 7;
+st.a0[0].v0 = 8;
+ 
+st.a1[0].arr[1] = 9;
+st.a1[0].v0 = 10;*/

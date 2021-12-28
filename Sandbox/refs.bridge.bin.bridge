@@ -1,0 +1,81 @@
+lib("User32.dll") {
+    ui32 MessageBoxA(ui32, string, string, ui32);
+} mod;
+lib("testdll.dll") {
+    ui32 CallbackInt64Int32(ui64, ui32);
+    i32 Print(string);
+} test;
+function ui32 TestFoo0(ui32 a0) {
+    test.Print("TestFoo0(a0=" + a0 + ")\n");
+    return 0;
+}
+function ui32 TestFoo(ui32 a0) {
+    test.Print("a0=" + a0 + "\n");
+    mod.MessageBoxA(0, "a0=" + a0, "refs.js", 0);
+    return a0 + 200;
+}
+function ui32 PassFooRef(function<TestFoo> f) {
+    f = TestFoo0;
+    return f(100);
+}
+function ui32 PassFooRef0(function<TestFoo>@ f) {
+    f = TestFoo0;
+    return f(200);
+}
+function ui32 PassFooRef1(function<TestFoo>@@ f) {
+    f = TestFoo0;
+    return f(300);
+}
+function<TestFoo> fn,fn0;
+ui8 v0 = 10;
+fn = TestFoo;
+test.Print("PassFooRef=" + PassFooRef0(TestFoo) + "\n");
+test.Print("PassFooRef=" + PassFooRef0(fn) + "\n");
+fn(1);
+function ui32 f(ui64 a0, ui32 a1) {
+    return 1 + a0 + a1;
+}
+function ui32 f1(ui64 a0, ui32 a1) {
+    return 5 + a0 + a1;
+}
+function ui32 ff0(function<f> fn) {
+    return fn(1, 2) + 10;
+}
+f(1, 2);
+ff0(f);
+function<ff0> ref_ff0 = ff0;
+ui32 res = ref_ff0(f) + 100;
+mod.MessageBoxA(0, "1) ref_ff0(f) + 10 = " + res, "functions.js", 0);
+res = ref_ff0(f1) + 100;
+mod.MessageBoxA(0, "2) ref_ff0(f1) + 10 = " + res, "functions.js", 0);
+function<f> ref_f = f;
+res = ref_ff0(ref_f) + 100;
+mod.MessageBoxA(0, "3) ref_ff0(ref_f) + 10 = " + res, "functions.js", 0);
+ref_f = f1;
+res = ref_ff0(ref_f) + 100;
+mod.MessageBoxA(0, "4) ref_ff0(ref_f) + 10 = " + res, "functions.js", 0);
+function function<f> GetFoo(ui32 a1) {
+    function<f> local_ref_f;
+    if(a1 == 0) {
+        local_ref_f = f;
+    }
+    else {
+        local_ref_f = f1;
+    }
+    return local_ref_f;
+}
+ref_f = GetFoo(0);
+res = ref_ff0(ref_f) + 100;
+mod.MessageBoxA(0, "5) ref_ff0(GetFoo(0)) + 10 = " + res, "functions.js", 0);
+ref_f = GetFoo(1);
+res = ref_ff0(ref_f) + 100;
+mod.MessageBoxA(0, "6) ref_ff0(GetFoo(1)) + 10 = " + res, "functions.js", 0);
+res = ref_ff0(GetFoo(1)) + 100;
+mod.MessageBoxA(0, "7) ref_ff0(GetFoo(1)) + 10 = " + res, "functions.js", 0);
+function function<f> GetFoo1(function<f> fn) {
+    return fn;
+}
+res = ref_ff0(GetFoo1(ref_f)) + 100;
+mod.MessageBoxA(0, "8) ref_ff0(GetFoo1(ref_f)) + 10 = " + res, "functions.js", 0);
+res = ref_ff0(GetFoo1(f)) + 100;
+mod.MessageBoxA(0, "9) ref_ff0(GetFoo(f)) + 10 = " + res, "functions.js", 0);

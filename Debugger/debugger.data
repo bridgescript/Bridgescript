@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<root>
+    <breakpoints><path name="C:\Projects\Script\MFCApplication1"><file name="Array.bridge"><bp>25</bp><bp>75</bp></file><file name="HelloWorld.bridge"><bp>5</bp><bp>11</bp></file><file name="a_test.bridge"><bp>13</bp><bp>16</bp><bp>17</bp><bp>20</bp><bp>22</bp><bp>23</bp><bp>24</bp></file><file name="a_test.bridge.bin.bridge"><bp>6</bp></file><file name="array.bridge"><bp>2</bp><bp>5</bp><bp>27</bp><bp>36</bp><bp>40</bp><bp>52</bp></file><file name="expression.bridge"><bp>7</bp></file><file name="float.bridge"><bp>13</bp></file><file name="memleak.bridge"><bp>1</bp><bp>11</bp><bp>45</bp></file><file name="refs.bridge"><bp>10</bp><bp>11</bp><bp>12</bp><bp>13</bp></file><file name="thread.bridge"><bp>9</bp><bp>11</bp><bp>14</bp><bp>18</bp><bp>32</bp><bp>52</bp><bp>65</bp></file><file name="types.bridge"><bp>2</bp><bp>3</bp><bp>4</bp><bp>5</bp></file></path><path name="C:\Projects\Script\Script"><file name="number.bridge"><bp>37</bp></file><file name="switch.bridge"><bp>7</bp><bp>15</bp></file></path></breakpoints>
+    <script_path>C:\Projects\Script\MFCApplication1\</script_path>
+    <watch>
+        <name>var1</name>
+        <name>arr[i]</name>
+    </watch>
+<var_list address="-1" viewas="0"></var_list>
+</root>

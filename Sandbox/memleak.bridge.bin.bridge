@@ -1,0 +1,26 @@
+ui8 i = 10;
+array<ui16> arrUi16;
+array<ui8> arrUi8;
+string str0 = "test sring";
+string str1;
+arrUi8 @= str2arr(str0);
+str1 = arr2str(arrUi8);
+arrUi16 @= str2warr(str0);
+string str2 = warr2str(arrUi16);
+struct S {
+    ui32@ x,y;
+    float f0;
+    struct A {
+        ui64@ v0,v1;
+    }
+     a;
+};
+array<S@,2> arr;
+i = 0;
+array<ui32,3> idx;
+arr[++i].x = 1;
+arr[i--].y = 2;
+arr[1].a.v0 = 3;
+arr[1].a.v1 = 4;
+arr[1].f0 = -1.2345e+9;
+ui32 x0 = 11;

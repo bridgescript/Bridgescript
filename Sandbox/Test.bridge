@@ -1,0 +1,78 @@
+// test lib validation
+struct A {
+    ui8 v8;
+    //array<string, 2> arr;
+    string str;
+};
+struct B {
+    array<A, 2> arr;
+    A a;
+};
+ 
+function bool div0() {
+    ui32 i =10;
+    return i / 0;
+}
+function ui8 _f(string s, A a, B b) {
+    div0();
+}
+function function<_f> __f(function<_f> f) {
+    A a;
+    B b;
+    f("test", a, b);
+}
+struct C {
+array<function<__f>,2> f;
+};
+//lib("test.dll") {
+//    bool Foo(C, ui8, function<__f>);
+//} lib;
+ 
+__f(_f);
+ 
+struct ST {
+    array<ui32@,4>@ arr;
+    ui64            v64;
+} s;
+array<ST@, 1> refSt;
+refSt[0].v64 = 0x0000000087654321;
+function ui32 GetRef(array<ST@, 1> @ref) {
+    ST st;
+    st.v64 = 0x1234567800000000;
+    ui32 i = 0;
+    for (; i < sizeof(st.arr) / sizeof(i); ++i) {
+        st.arr[i] = (i + 1) * 10;
+    }
+    ref[0] @= st;
+    return 0;
+}
+ 
+GetRef(refSt);
+ 
+function ui32 F0_(ui32 a) { return a + 1; }
+array<function<F0_>> fn @= cast<array<function<F0_>>>(F0_);
+function ui32 F1_(ui32 a) { return a + 2; }
+function function<F0_> F1(ui32 a) { 
+    if (a == 0) 
+        return F0_; 
+    else 
+        return F1_; 
+}
+fn[0](1); 
+F1(1);
+ 
+struct A{
+    struct B{
+        ui32@ v;
+    }@ b; 
+} st;
+array<ui32@,4> arr;
+ui32 a = 0xaaaa, b = 0xbbbb;
+arr[0] = 0x1111;
+ui32 c @= b;
+st.b.v = 0x9999;
+b @= c @= st.b.v;
+b @= arr[0] @= c;
+arr[0] = 0x400;
+//arr[i * i + 1] = i + 10;
+b = 0;

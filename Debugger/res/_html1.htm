@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="msthemecompatible" content="yes" />
+
+    <style type="text/css">
+        div {
+            /*white-space:pre;*/
+        }
+
+        body {
+            font: 22px;
+            margin: 0;
+        }
+
+        td {
+            /*white-space:pre;*/
+            font-family: 'Times New Roman';
+        }
+
+        .breakpoint {
+            background-image: url(2/319);
+            background-size: cover;
+            background-position-x: -20px;
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: rgb(220,220,220);
+            margin: 0;
+            white-space: pre;
+        }
+
+        .invalidbreakpoint {
+            background-image: url(2/319);
+            background-size: cover;
+            background-position-x: 0px;
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: rgb(220,220,220);
+            margin: 0;
+            white-space: pre;
+        }
+
+        .nobreakpoint {
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: rgb(220,220,220);
+            margin: 0;
+            white-space: pre;
+        }
+
+        .empty {
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: none;
+            margin: 0;
+            white-space: pre;
+        }
+
+        .codecell {
+            margin: 0;
+            width: 100%;
+        }
+
+        .code {
+            white-space: pre;
+            margin: 0;
+            min-width: 20px;
+        }
+
+        .keyword {
+            color: blue;
+        }
+
+        .function {
+            font: bold;
+        }
+    </style>
+    <script type="text/javascript" language="javascript">
+        function ShowBreakPoint() {
+            var e = event.srcElement;
+            if (e.className == "nobreakpoint") {
+                //e.innerText = "@";
+                e.style.backgroundImage = "url(2/319)";
+                e.style.backgroundPositionX = "-20px";
+                e.style.backgroundSize = "cover";
+            }
+        }
+        function HideBreakPoint() {
+            var e = event.srcElement;
+            if (e.className == "nobreakpoint") {
+                //e.innerText = " ";
+                e.style.backgroundImage = "";
+                //e.style.backgroundPositionX = "-20px";
+                //e.style.backgroundPosition = "cover";
+            }
+
+        }
+
+    </script>
+</head>
+
+<body style="width:100%;">
+
+    <table cellpadding="0" cellspacing="0" name="tblContext" id="tblContext">
+        <tbody>
+
+            <tr style="background-color:white">
+                <td><p class="empty"> </p></td>
+                <td class="codecell">
+                    <p class="code">
+                        <!--<b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {-->
+                    </p>
+                </td>
+            </tr>
+
+            <!--<tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code"><b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {</p></td></tr>
+            <tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code">    if(3) { } else {i=0;}</p></td></tr>
+            <tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code">        return 0;</p></td></tr>
+            <tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code">}</p></td></tr>-->
+            <!--<ev id="eventHolder" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" ></ev>-->
+            <!--<tr style="background-color:white"><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()"
+                                                      style="background-image:url(bitmap2.bmp); background-size: 40px; background-position-x: -20px"> </p></td><td class="codecell"><p class="code"><b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {</p></td></tr>
+            <tr style="background-color:white">
+                <td>
+                    <p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()"
+                       style="background-image:url(bitmap2.bmp); background-size: cover; background-position-x: 0px"></p>
+                </td>
+                <td class="codecell"><p class="code"><b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {</p></td>
+            </tr>-->
+
+
+        </tbody>
+
+    </table>
+    <!--<template id="tblRowTample">
+        <tr><td><p id="eventHolder" class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code"></p></td></tr>
+    </template>-->
+    <template>
+
+        <div id="eventHolder" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" style="height:0px;width:0px;"></div>
+    </template>
+
+    <!--<img src="" style="left:-10px;" />-->
+</body>
+</html>

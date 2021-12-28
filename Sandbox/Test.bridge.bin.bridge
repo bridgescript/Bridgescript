@@ -1,0 +1,14 @@
+struct A {
+    struct B {
+        ui32@ v;
+    }@ b;
+} st;
+array<ui32@, 4> arr;
+ui32 a = 0xaaaa,b = 0xbbbb;
+arr[0] = 0x1111;
+ui32 c @= b;
+st.b.v = 0x9999;
+b @= c @= st.b.v;
+b @= arr[0] @= c;
+arr[0] = 0x400;
+b = 0;

@@ -1,0 +1,79 @@
+ui8 i = 10;
+array<ui8, i + i / 3> dynArr;
+array<ui16> arrUi16;
+array<ui8> arrUi8 @= dynArr;
+string str0 = "test sring";
+string str1;
+//function array <ui8, 2> fff(array <ui8, i> ss){};
+ 
+arrUi8 @= str2arr(str0);
+str1 @= arr2str(arrUi8);
+ 
+arrUi16 @= str2warr(str0);
+string str2 @= warr2str(arrUi16);
+ 
+//array<ui32@, 2> a0, a1;
+//a1[0] = 10;
+//a1[1] = 20;
+//struct My {
+//ui64 v0;
+//array<ui32,3> a;
+//} my;
+//function ui32 test(ui32 a) {
+//return sizeof(my);
+//}
+//array<function<test>,2> foo;
+//test(sizeof(foo));
+//sizeof(test);
+//i = 1 + test(sizeof(test) + 20);
+//if (1) 
+//test(i);
+//else
+//test(9);
+//for (sizeof(i);sizeof(i) < 0; ++i) 
+//    sizeof(i);
+ 
+//switch(i) {
+//    case 3:
+//    //if (i)
+//        sizeof(i);
+//        break;
+//    default:
+//        sizeof(i);
+//        break;
+//}
+//sizeof(test());
+ 
+struct S {
+    ui32@ x, y;
+    float f0;
+    struct A {
+        ui64@ v0,v1;
+    } a;
+};
+array<S@, 2> arr;
+ i = 0;
+ array<ui32, 3> idx;
+ //arr[++idx[i]].x = 33;
+arr[++i].x = 1;
+arr[i--].y = 2;
+arr[1].a.v0 = 3;
+arr[1].a.v1 = 4;
+arr[1].f0 = -1.2345e+9;
+ 
+ui32 x0 = 11;
+//S s;
+//s.x = 1;
+//s.y = 2;
+//s.a.v0 = 3;
+//s.a.v1 = 4;
+ 
+//for (;x < 2; ++x) {
+//    for (y = 0; y < 2; ++y) {
+//        arr[x,y].x = x;
+//        arr[x,y].y = y;
+//        //arr[x,y].f0 = (x + 1) * (1 + y) * 1.2345;
+//    }
+//}
+//ui32 v32 = arr[0,0].x;
+//v32 = arr[1,1].y;

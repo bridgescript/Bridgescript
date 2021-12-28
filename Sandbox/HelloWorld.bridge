@@ -1,0 +1,9 @@
+// Hello world! Example
+ 
+include "include/console.bridge"
+
+if (Console_Init()) {
+ 
+    Console_Write("Hello World!\n");
+    Console_Term();
+}

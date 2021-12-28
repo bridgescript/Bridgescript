@@ -1,0 +1,7 @@
+function ui32 fff() {
+}
+array<function<fff>,3 * 4> af;
+ui8 i = sizeof(af);
+array<ui32,(2 * i + 4)> arr1;
+arr1[20] = 123;
+i = 9;

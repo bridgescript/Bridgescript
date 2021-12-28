@@ -1,0 +1,84 @@
+include "console.bridge"
+ 
+Console_Init();
+ /*
+struct Data {
+    ui32 a0,a1,a2;
+};
+ 
+array<Data@,2,3,4> a;
+ 
+ui32 x,y,z;
+ 
+for(x = 0; x < 2; ++x) {
+    for(y = 0; y < 3; ++y) {
+        for(z = 0; z < 4; ++z) {
+            a[x,y,z].a0 = x;
+            a[x,y,z].a1 = y;
+            a[x,y,z].a2 = z;
+        }
+        z = 0;
+    }
+    y = 0;
+}
+ 
+array<Data@> _a @= a; // assignment by reference
+array<Data@, 2, 12> _a2 = a; // assignment by value, different dimensions, array sizes must be he same
+array<Data@, 2, 2> __a = a; // copy 4 items only
+array<Data@, 8> a3;
+a3[0].a0 = 11; 
+_a2 = a3; */
+function bool BooFoo(ui32 arg) {
+    Console_Write("BooFoo(" + arg + ")\n");
+    if(--arg) {
+        return BooFoo(arg);
+    }
+    return true;
+}
+ 
+function bool _BooFoo(ui32 arg) {
+    Console_Write("_BooFoo(" + arg + ")\n");
+    return false;
+} 
+ 
+struct Test {
+    bool b;
+    ui64 v64;
+    struct A {
+        ui64@ v0,v1;
+        ui8 v2;
+        function<BooFoo> fn;
+    } a;
+    array<A,2> arr;
+} t;
+ 
+function bool Foo(array<Test@,2> arg) {
+    Console_Write("** " + arg[0].v64 + " **\n");
+    Console_Write("** " + arg[1].v64 + " **\n");
+    Console_Write("** " + arg[0].arr[0].v0 + " **\n");
+    Console_Write("** " + arg[0].arr[1].v0 + " **\n");
+    Console_Write("** " + arg[1].arr[0].v0 + " **\n");
+    Console_Write("** " + arg[1].arr[1].v0 + " **\n");
+    Console_Write("** " + arg[0].a.v0 + " **\n");
+    Console_Write("** " + arg[1].a.v0 + " **\n");
+    return false;
+}
+array<Test@,2> arr0;
+arr0[0].v64 = 100;
+arr0[1].v64 = 200;
+arr0[0].arr[0].v0 = 1000;
+arr0[0].arr[1].v0 = 2000;
+arr0[1].arr[0].v0 = 1100;
+arr0[1].arr[1].v0 = 2200;
+arr0[0].a.v0 = 1999;
+arr0[1].a.v0 = 2999;
+arr0[1].a.fn(4); // calling default function
+arr0[1].a.fn = _BooFoo;
+arr0[1].a.fn(2);
+Foo(arr0);//lock(Foo);
+arr0[1].a.v0 = 3999; 
+ 
+error(e) { // error handler
+}
+ 
+Console_Term();                                    

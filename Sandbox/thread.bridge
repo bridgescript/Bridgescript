@@ -1,0 +1,91 @@
+include "console.bridge";
+
+function ui32 MyCallback(array<ui8>@ arg) {
+    Console_Write("    MyCallback(" + arr2str(arg) + ")\n");
+    return sizeof(arg);
+}
+
+struct MyData {
+    i32 val1;
+    i32 val2;
+    function<MyCallback> fnCallback;
+}; 
+ 
+function ui32 DivBy0(ui32 arg) {
+    ui32 i = 9;
+    i = i / arg; 
+//    error(e){
+//        Console_Write("THREAD (" + kernel32.GetCurrentThreadId() + ") - ERROR: " + e.name + "\n"); 
+//    } 
+}
+function bool Wrapper(ui32 arg) {
+    DivBy0(0);
+}
+function ui32 MyThread0(MyData@ arg) {
+    unlock(arg);
+    Wrapper(1);
+    error(e){
+        Console_Write("THREAD (" + kernel32.GetCurrentThreadId() + ") - ERROR: " + e.name + "\n");
+        Console_Write("---------------------------------------------------------------------------------------\n");
+        Console_Write(e.trace + "\n");
+        Console_Write("---------------------------------------------------------------------------------------\n");
+    } 
+ 
+    Console_Write("THREAD (" + kernel32.GetCurrentThreadId() + "): val1: " + arg.val1 + ", val2: " + arg.val2 + "\n");
+    return arg.fnCallback(str2arr("in MyThread0()"));
+}
+function ui32 MyThread1(MyData@ arg) {
+    unlock(arg); 
+    Console_Write("THREAD (" + kernel32.GetCurrentThreadId() + "): val1: " + arg.val1 + ", val2: " + arg.val2 + "\n");
+    return arg.fnCallback(str2arr("in MyThread1()"));
+}
+function ui32 MyThread2(MyData@ arg) {
+    unlock(arg); 
+    Console_Write("THREAD (" + kernel32.GetCurrentThreadId() + "): val1: " + arg.val1 + ", val2: " + arg.val2 + "\n");
+    return arg.fnCallback(str2arr("in MyThread2()"));
+}
+ 
+array<MyData,3> data;
+array<ui32,3>   htreadIds, handles;
+array<function<MyThread0>,3> threadFoo;
+ 
+Console_Init();
+ 
+threadFoo[0] = MyThread0;
+threadFoo[1] = MyThread1;
+threadFoo[2] = MyThread2;
+ 
+function ui32 CloseHandles(ui32 idx) {
+    ui32 i = 0;
+    for(; i <= idx; ++i) {
+        kernel32.CloseHandle(handles[i]);
+    }
+    return 0;
+}
+ 
+ui32 i = 0;
+for (; i < 3; ++i) {
+    SECURITY_ATTRIBUTES sa;
+    
+    data[i].val1 = i;
+    data[i].val2 = i + 100;
+    data[i].fnCallback = MyCallback;
+    lock(data[i]);
+    handles[i] = kernel32.CreateThread(sa, 0, cast<function<ThreadDecl>>(threadFoo[i]), cast<ui32>(data[i]), 0, htreadIds[i]);
+ 
+    if (handles[i] == 0) {
+        CloseHandles(i);
+        break;
+    }
+}
+ 
+kernel32.WaitForMultipleObjects(3, handles, true, -1);
+ 
+// Close all thread handles.
+CloseHandles(2);
+ 
+error(e){}
+ 
+Console_Term();
+ 
+ 

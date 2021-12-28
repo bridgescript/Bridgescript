@@ -1,0 +1,83 @@
+/*{}
+a = b + c * (x / y);
+f();
+*/
+/*
+a = b + c;
+test();
+{ a = b + c; }
+test1(a);
+test2(a, b);
+testFoo(a(), b(a+d,s), a);
+test3(a + b - c * 23 / 45);
+test4((a(s, d) + b) - c * (23 / 45));
+test5(a + b - c * 23 / 45, d - ff);
+*/
+ 
+if (s == 3)
+    x = y;
+else
+    a = "ss";
+ 
+if (s < f) {
+    while (w != 0)
+        for (; ;) w = w - 1;
+}
+else
+    d = f * e / e;
+    
+//++w;
+//f(a+d,d);
+//x = 2 * y + (d & f * g) & (s & d + f);
+//x = (x * (a + b) + (c) * (c /d));
+/*c = a + (b + d * d / (s & (e-d)));
+res = v0 + v1 - v2 + v3 * v5 + (v6 - v7 * v8 * v9 / v11);
+c = a + test0();
+*/
+//while (s + 1) for (; ;) while (i == 3); { i += (1 + 2); };
+//for (;;) while(20) break;// { };
+//while (foo(f * d)) s = d; { }
+ 
+//for (w >= 3; ;) {
+//        ;
+//}
+  //while (a < 3);
+//while (a < 3) x = y;
+//while (a < 3) {; x = y;
+//    d = s + d * f / f;
+//}
+/*
+case "":
+    break;
+default:
+    break;
+    while() {break;}
+    while()break;//?
+    for() {break;}
+*/
+        //while (a + b - c) {
+        //    if (sd + s) {
+ 
+        //    }
+        //}
+        /*
+        function foo0() {}
+        
+        function foo1(arg0, arg1, arg2) {
+        }
+        
+        {
+            function foo2(arg0) {
+                return 0;
+            }
+        }
+        */
+        //f(1, a+3, 3);
+        //while(f()) f();
+        //for (a = 1; fr(a + d, fq(s, d, f)) ; a += 1) s(); { c = s; }
+        /*for (a = 1; a < 45; a += 1) {
+            test3(a + b - c * 23 / 45);
+            while (f(s+f)*foo(f*d)) {
+                x = 2 * y + (d & f * g) & (s & d + f);
+            };
+        }*/

@@ -1,0 +1,28 @@
+// Console API
+ 
+include "kernel.bridge"
+ 
+ui32 g_hConsoleStd;
+ 
+function bool Console_Init() {
+    if (kernel32.AllocConsole()) {
+        g_hConsoleStd = kernel32.GetStdHandle(STD_OUTPUT_HANDLE);
+ 
+        return g_hConsoleStd != -1 && g_hConsoleStd != 0;
+    }
+    return false;
+}
+ 
+function bool Console_Term() {
+    return kernel32.FreeConsole();
+}
+ 
+function ui32 Console_Write(string@ txt) {
+    array<ui8> pData @= str2arr(txt);
+    ui32       lpNumberOfBytesWritten;
+    OVERLAPPED overlapped;
+ 
+    ui32 res = kernel32.WriteFile(g_hConsoleStd, pData, sizeof(pData), lpNumberOfBytesWritten, overlapped);
+ 
+    return res;
+}

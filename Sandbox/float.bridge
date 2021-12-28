@@ -1,0 +1,29 @@
+function ui32 foo(ui8 v, ui32 vv) {
+    return 123h;
+}
+foo(10101b,11111111B);
+ui32 i; 
+switch(0x12a) {
+case 0xad: 
+ 
+} 
+ui32 v32 = 12345678h, _v32 = 0xabc45;
+ui8 v8 = 33, _v8 = 2;
+ui64 v64 = 0x1234abcd0000ffff, _v64 = 0x1234abcd000ff; 
+array<ui32, 1000b> arr;
+arr[arr[0] + 1b] = 0x12345678;
+ui64 d = 0x1234abcd4567ffff, s = 010111001010000b, w = 9 & 6ab2h;
+double x = -123 - 0xdf;
+ui64 r = d*(s+w - 0xdf);
+x = r + -123 | 2;
+x = 0.01;
+x = -0.02;
+x = .01;
+x = -.01;
+x = -21e-12;
+x = -21e+1;
+x = -.0012e+2;
+x = -21.02e+23;
+x = 321.012e+3;
+string str = x;
+str = str + " <-"; 

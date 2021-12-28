@@ -1,0 +1,104 @@
+function ui32 WNDPROC(ui32   hwnd, ui32   uMsg, ui16   wParam, ui32   lParam) { // default
+    return 0;
+}
+ 
+struct POINT {
+  i32 x;
+  i32 y;
+};
+ 
+struct MSG {
+  ui32   hwnd;
+  i32    message;
+  ui16   wParam;
+  ui32   lParam;
+  ui32   time;
+  POINT  pt;
+  ui32   lPrivate;
+};
+ 
+struct WNDCLASS {
+  ui32      style;
+  function<WNDPROC>   lpfnWndProc;
+  i32       cbClsExtra;
+  i32       cbWndExtra;
+  ui32      hInstance;
+  ui32      hIcon;
+  ui32      hCursor;
+  ui32      hbrBackground;
+  array<ui8,100>@    lpszMenuName;
+  array<ui8,100>@    lpszClassName;
+};
+ 
+struct RECT {
+    ui32    left;
+    ui32    top;
+    ui32    right;
+    ui32    bottom;
+};
+ 
+struct PAINTSTRUCT {
+    ui32         hdc;
+    ui32        fErase;
+    RECT        rcPaint;
+    ui32        fRestore;
+    ui32        fIncUpdate;
+    array<ui32,32> rgbReserved;
+};
+ 
+ui32 SW_SHOW = 5;
+ 
+ui32 WS_OVERLAPPED  = 0x00000000,
+     WS_CAPTION     = 0x00C00000,
+     WS_SYSMENU     = 0x00080000,
+     WS_THICKFRAME  = 0x00040000,
+     WS_MINIMIZEBOX = 0x00020000,
+     WS_MAXIMIZEBOX = 0x00010000;
+ 
+ui32 WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+ui32 CW_USEDEFAULT       = 0x80000000;
+ui32 NULL = 0x00000000;
+ 
+ui32 WM_DESTROY = 0x0002;
+ui32 WM_PAINT   = 0x000F;
+ui32 COLOR_WINDOW = 5;
+ 
+lib("user32.dll") {
+    ui32 RegisterClassA(WNDCLASS@);
+    ui32 UnregisterClassA(array<ui8>@,//  LPCSTR    lpClassName,
+                          ui32);//HINSTANCE hInstance
+    ui32 PostQuitMessage(i32);// nExitCode
+    ui32 CreateWindowExA(ui32, //dwExStyle,
+                         array<ui8>@, //lpClassName,
+                         array<ui8>@, //lpWindowName,
+                         ui32, // dwStyle,
+                         i32, //int       X,
+                         i32, //int       Y,
+                         i32, //int       nWidth,
+                         i32, //int       nHeight,
+                         ui32, //HWND      hWndParent,
+                         ui32, //HMENU     hMenu,
+                         ui32, //HINSTANCE hInstance,
+                         ui32);//LPVOID    lpParam
+    ui32 ShowWindow(ui32,//hWnd,
+                    i32);//int  nCmdShow
+    ui32 DefWindowProcA(ui32,//  HWND   hWnd,
+                        i32,//UINT   Msg,
+                        ui16,//WPARAM wParam,
+                        ui32);//LPARAM lParam
+    ui32 GetMessageA(MSG@,//lpMsg,
+                    ui32,//  hWnd,
+                    i32,//UINT  wMsgFilterMin,
+                    i32);//UINT  wMsgFilterMax
+    ui32 TranslateMessage(MSG@,);// *lpMsg
+ 
+    ui32 DispatchMessageA(MSG@);// *lpMsg
+    ui32 BeginPaint(ui32,//HWND          hWnd,
+                    PAINTSTRUCT@);// lpPaint
+    ui32 EndPaint(ui32,//HWND              hWnd,
+                  PAINTSTRUCT@);// *lpPaint
+    i32 FillRect(ui32,//HDC        hDC,
+                 RECT@,// *lprc,
+                 ui32);//HBRUSH     hbr
+ 
+} user32;

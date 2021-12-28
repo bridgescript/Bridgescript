@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<meta http-equiv="msthemecompatible" content="yes" />-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <style type="text/css">
+        div {
+            /*white-space:pre;*/
+        }
+
+        body {
+            font-size: 14px;
+            margin: 0;
+            font-family: 'Consolas';
+        }
+
+        input {
+            font-size: 14px;
+            margin: 0;
+            font-family: 'Consolas';
+            border-left: 1px solid rgb(220,220,220);
+        }
+
+        td {
+            /*white-space:pre;*/
+            /*font: 22px;*/
+            margin-left: 0;
+            font-family: 'Consolas';
+        }
+
+        .breakpoint {
+            background-image: url(2/319);
+            background-size: cover;
+            background-position-x: -20px;
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: rgb(220,220,220);
+            margin: 0;
+            white-space: pre;
+        }
+
+        .invalidbreakpoint {
+            background-image: url(2/319);
+            background-size: cover;
+            background-position-x: 0px;
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: rgb(220,220,220);
+            margin: 0;
+            white-space: pre;
+        }
+
+        .nobreakpoint {
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: rgb(220,220,220);
+            background-image: none;
+            margin: 0;
+            margin-right:2px;
+            white-space: pre;
+        }
+
+        .empty {
+            float: left;
+            width: 20px;
+            height: 20px;
+            color: brown;
+            cursor: pointer;
+            background-color: none;
+            margin: 0;
+            white-space: pre;
+        }
+
+        .codecell {
+            margin: 0;
+            width: 100%;
+        }
+
+        .code {
+            white-space: pre;
+            margin: 0;
+            min-width: 20px;
+            //background-color: lightpink;//transparent;
+        }
+
+        .keyword {
+            color: blue;
+        }
+
+        .function {
+            font: bold;
+        }
+    </style>
+    <script type="text/javascript" language="javascript">
+        function ShowBreakPoint() {
+            var e = event.srcElement;
+            if (e.className == "nobreakpoint") {
+                e.style.backgroundImage = "url(2/319)";
+                e.style.backgroundPositionX = "-20px";
+                e.style.backgroundSize = "cover";
+            }
+        }
+        function HideBreakPoint() {
+            var e = event.srcElement;
+            if (e.className == "nobreakpoint") {
+                e.style.backgroundImage = "";
+            }
+
+        }
+        var h;
+        var deb = 0;
+        var App_InsertRow;
+        var App_DeleteRow;
+        var App_ScriptEdited = false;
+        var App_EnableEditing = true;
+
+        function getTextWidth(text, font) {
+            // re-use canvas object for better performance
+            var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+            var context = canvas.getContext("2d");
+            context.font = font;
+            var metrics = context.measureText(text);
+            return metrics.width;
+        }
+        function OnClick() {
+            if (!App_EnableEditing) return;
+//        if (deb)
+//            debugger;
+            App_ScriptEdited = true;
+            edit = ActivateEdit(event.currentTarget);
+            if (edit) {
+                var w = getTextWidth(event.currentTarget.innerText, "normal 14px Consolas");
+                var len = event.currentTarget.innerText.length;
+                var pos = (event.offsetX * len) / w;
+                r = edit.createTextRange();
+                r.collapse(true);
+                r.moveStart('character', Math.round(pos));
+                r.select();
+            }
+        }
+        function ActivateEdit(arg) {
+            if (arg.parentElement.cells[1].children.length == 1) {
+                arg.parentElement.bgColor = "";
+                inputEl = document.getElementById("inputHolder");
+                edit = inputEl.cloneNode(true);
+                arg.parentElement.cells[1].insertAdjacentElement("afterBegin",edit);
+                var txt = arg.parentElement.cells[1].children[1];
+                h = txt.clientHeight;
+                edit.style.visibility = "visible";
+                edit.style.height = h + "px";
+                edit.value = txt.innerText;
+                txt.style.visibility = "hidden";
+                txt.style.height = "0px";
+                edit.focus();
+                return edit;
+            }
+            return null;
+        }
+        function CloseEdit(codeCell) {
+            var edit = codeCell.children[0];
+            if (edit.style.visibility == "visible") {
+                var txt = codeCell.children[1];
+                txt.style.visibility = "visible";
+                txt.style.height = h + "px";
+                txt.innerText = edit.value;
+                codeCell.removeChild(edit);
+            }
+        }
+
+        ////<tr style="background-color:white">
+        ////    <td><p class="empty"> </p></td>
+        ////    <td class="codecell" onclick="ActivateEdit(this)">
+        ////        <p class="code">function bool foo(ui32 a0, ui32 aa)         {</p>
+        ////        <!---->
+        ////    </td>
+        ////</tr>
+        function OnKeyDown(arg) {
+            if (!App_EnableEditing) return;
+
+            if (event.keyCode == 9/*"Tab"*/) {
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
+                return false;
+            }
+        }
+        function OnKeyUp(arg) {
+            if (!App_EnableEditing) return;
+
+            var codeCell = arg.parentElement;
+            var row = codeCell.parentElement;
+            var tbl = row.parentElement.parentElement;
+            var edit = codeCell.children[0];
+            switch (event.keyCode) {
+                case 9:/*"Tab"*/ {
+                        var start = edit.selectionStart;
+                        edit.value = edit.value.substr(0, start) + "    " + edit.value.substr(start);
+                        range = edit.createTextRange();
+                        range.collapse(true);
+                        range.moveStart('character', start + 4);
+                        //range.moveEnd('character', start);
+                        range.select();
+                    }
+                    break;
+                case 46:/*"Del"*/ {
+                        var end = edit.value.length;
+                        var start = edit.selectionStart;
+                        var str = edit.value.substr(edit.selectionEnd, edit.value.length);
+                        if (start != end) {
+                            //document.execCommand("delete");
+                            return;
+                        }
+                        if (start == edit.value.length) {
+                            if (row.rowIndex < (tbl.rows.length - 1)) {
+                                var nextRow = tbl.rows[row.rowIndex + 1];
+                                var nextTxt = nextRow.children[1];
+                                arg.value += nextTxt.innerText;
+                                range = arg.createTextRange();
+                                range.collapse(true);
+                                range.moveStart('character', start);
+                                range.select()
+                                App_DeleteRow(row.rowIndex + 1);
+                            }
+                        }
+                    }
+                    break;
+                case 8:/*"Backspace"*/ {
+                        if (edit.selectionStart == 0) {
+                            var end = edit.selectionEnd;
+                            var start = edit.selectionStart;
+                            var str = edit.value.substr(edit.selectionEnd, edit.value.length);
+                            if (start != end) {
+                                document.execCommand("delete");
+                                return;
+                            }
+                            if (start == 0) {
+                                if (row.rowIndex != 0) {
+                                    CloseEdit(codeCell);
+                                    var prevRow = tbl.rows[row.rowIndex - 1];
+                                    edit = ActivateEdit(prevRow.cells[1]);
+                                    start = edit.value.length;
+                                    edit.value += str;
+                                    range = edit.createTextRange();
+                                    range.collapse(true);
+                                    range.moveStart('character', start);
+                                    range.select()
+                                    App_DeleteRow(row.rowIndex);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 13:/*"Enter"*/ {
+                        var end = edit.selectionEnd;
+                        var start = edit.selectionStart;
+                        var str = edit.value.substr(edit.selectionEnd, edit.value.length);
+                        if (start != end) {
+                            document.execCommand("delete");
+                        }
+                        var range = edit.createTextRange();
+                        range.collapse(true);
+                        range.moveStart('character', start);
+                        range.moveEnd('character', str.length);
+                        range.select();
+                        document.execCommand("delete");
+                        CloseEdit(codeCell);
+                        // create empty row in the table
+                        if (!str.length) str = " ";
+                        App_InsertRow(row.rowIndex + 1, str);
+                        var nextRow = tbl.rows[row.rowIndex + 1];
+                        edit = ActivateEdit(nextRow.cells[1]);
+                        edit.value = str;
+                        range = edit.createTextRange();
+                        range.collapse(true);
+                        range.moveStart('character', 0);
+                        range.moveEnd('character', 0);
+                        range.select();
+                    }
+                    break;
+                case 40:/*"Down"*/ {
+                        // close this edit and move to the next one
+                        // get next row and call ActivateEdit(nextrow.cell)
+                   //alert(tbl.rows.length + " " + row.rowIndex);
+                        if (tbl.rows.length - 1 > row.rowIndex + 1) {
+                            var start = edit.selectionStart;
+                            CloseEdit(codeCell);
+                            var nextRow = tbl.rows[row.rowIndex + 1];
+                            edit = ActivateEdit(nextRow.cells[1]);
+                            range = edit.createTextRange();
+                            range.collapse(true);
+                            range.moveStart('character', start);
+                            range.select();
+                        }
+                    }
+                    break;
+                case 38:/*"Up"*/ {
+                        // close this edit and move to the next one
+                        // get previous row and call ActivateEdit(prevrow.cell)
+                        if (row.rowIndex != 0) {
+                            var start = edit.selectionStart;
+                            CloseEdit(codeCell);
+                            var prevRow = tbl.rows[row.rowIndex - 1];
+                            edit = ActivateEdit(prevRow.cells[1]);
+                            range = edit.createTextRange();
+                            range.collapse(true);
+                            range.moveStart('character', start);
+                            range.select();
+
+                        }
+                    }
+                    break;
+            }
+        }
+        function OnBlur(arg) {
+            if (!App_EnableEditing) return;
+
+            var codeCell = arg.parentElement;
+            CloseEdit(codeCell);
+        }
+    </script>
+</head>
+
+<body style="width:100%;">
+    <table cellpadding="0" cellspacing="0" name="tblContext" id="tblContext">
+        <tbody>
+            <tr style="background-color:white">
+                <td><p class="empty" style="cursor:pointer;"> </p></td>
+                <td class="codecell">
+                    <p class="code">
+                        <!--<b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {-->
+                    </p>
+                </td>
+            </tr>
+            <!--<tr style="background-color:white">
+                <td><p class="nobreakpoint"> </p></td>
+                <td class="codecell" onclick="OnClick()">
+                    <p class="code">function bool foo(ui32 a0, ui32 aa)         {</p>
+                </td>
+            </tr>
+            <tr style="background-color:white">
+                <td><p class="nobreakpoint"> </p></td>
+                <td class="codecell" onclick="OnClick()">
+                    <p class="code">    return a0 != 0; </p>
+                </td>
+            </tr>
+            <tr style="background-color:white">
+                <td><p class="nobreakpoint"> </p></td>
+                <td class="codecell" onclick="OnClick()">
+                    <p class="code">}</p>
+                </td>
+            </tr>-->
+
+            <!--<tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code"><b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {</p></td></tr>
+            <tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code">    if(3) { } else {i=0;}</p></td></tr>
+            <tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code">        return 0;</p></td></tr>
+            <tr><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code">}</p></td></tr>-->
+            <!--<ev id="eventHolder" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" ></ev>-->
+            <!--<tr style="background-color:white"><td><p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()"
+                                                      style="background-image:url(bitmap2.bmp); background-size: 40px; background-position-x: -20px"> </p></td><td class="codecell"><p class="code"><b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {</p></td></tr>
+            <tr style="background-color:white">
+                <td>
+                    <p class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()"
+                       style="background-image:url(bitmap2.bmp); background-size: cover; background-position-x: 0px"></p>
+                </td>
+                <td class="codecell"><p class="code"><b class="function">function</b>       <k class="keyword">bool</k> foo(ui32 a0, ui32 aa)         {</p></td>
+            </tr>-->
+
+
+        </tbody>
+
+    </table>
+    <!--<template id="tblRowTample">
+        <tr><td><p id="eventHolder" class="breakpoint" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" > </p></td><td class="codecell"><p class="code"></p></td></tr>
+    </template>-->
+    <template>
+
+        <div id="eventHolder" onclick="OnClick()" onmouseover="ShowBreakPoint()" onmouseout="HideBreakPoint()" style="height:0px;width:0px;"></div>
+        <input id="inputHolder" onkeyup="OnKeyUp(this)" onblur="OnBlur(this)" type="text" onkeydown="OnKeyDown(this)"
+               style="left:-1px; width:100%; border:none; position:relative; visibility:hidden; overflow:hidden;" />
+    </template>
+    <div id="out"></div>
+    <!--<div contenteditable="true" onmousemove="FollowMouse (this)">
+        Move your mouse over this text, the caret will follow it.
+    </div>-->
+    <!--<img src="" style="left:-10px;" />-->
+</body>
+</html>

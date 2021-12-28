@@ -1,0 +1,156 @@
+function ui32 WNDPROC(ui32 hwnd, ui32 uMsg, ui16 wParam, ui32 lParam) {
+    return 0;
+}
+struct POINT {
+    i32 x;
+    i32 y;
+};
+struct MSG {
+    ui32 hwnd;
+    i32 message;
+    ui16 wParam;
+    ui32 lParam;
+    ui32 time;
+    POINT pt;
+    ui32 lPrivate;
+};
+struct WNDCLASS {
+    ui32 style;
+    function<WNDPROC> lpfnWndProc;
+    i32 cbClsExtra;
+    i32 cbWndExtra;
+    ui32 hInstance;
+    ui32 hIcon;
+    ui32 hCursor;
+    ui32 hbrBackground;
+    array<ui8, 100>@ lpszMenuName;
+    array<ui8, 100>@ lpszClassName;
+};
+struct RECT {
+    ui32 left;
+    ui32 top;
+    ui32 right;
+    ui32 bottom;
+};
+struct PAINTSTRUCT {
+    ui32 hdc;
+    ui32 fErase;
+    RECT rcPaint;
+    ui32 fRestore;
+    ui32 fIncUpdate;
+    array<ui32, 32> rgbReserved;
+};
+ui32 SW_SHOW = 5;
+ui32 WS_OVERLAPPED = 0x00000000,WS_CAPTION = 0x00C00000,WS_SYSMENU = 0x00080000,WS_THICKFRAME = 0x00040000,WS_MINIMIZEBOX = 0x00020000,WS_MAXIMIZEBOX = 0x00010000;
+ui32 WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+ui32 CW_USEDEFAULT = 0x80000000;
+ui32 NULL = 0x00000000;
+ui32 WM_DESTROY = 0x0002;
+ui32 WM_PAINT = 0x000F;
+ui32 COLOR_WINDOW = 5;
+lib("user32.dll") {
+    ui32 RegisterClassA(WNDCLASS@);
+    ui32 UnregisterClassA(array<ui8>@, ui32);
+    ui32 PostQuitMessage(i32);
+    ui32 CreateWindowExA(ui32, array<ui8>@, array<ui8>@, ui32, i32, i32, i32, i32, ui32, ui32, ui32, ui32);
+    ui32 ShowWindow(ui32, i32);
+    ui32 DefWindowProcA(ui32, i32, ui16, ui32);
+    ui32 GetMessageA(MSG@, ui32, i32, i32);
+    ui32 TranslateMessage(MSG@);
+    ui32 DispatchMessageA(MSG@);
+    ui32 BeginPaint(ui32, PAINTSTRUCT@);
+    ui32 EndPaint(ui32, PAINTSTRUCT@);
+    i32 FillRect(ui32, RECT@, ui32);
+} user32;
+struct SECURITY_ATTRIBUTES {
+    ui32 nLength;
+    ui32 lpSecurityDescriptor;
+    bool bInheritHandle;
+};
+function ui32 ThreadDecl(ui32@ arg) {
+    return 0;
+}
+struct OVERLAPPED {
+    ui32 Internal;
+    ui32 InternalHigh;
+    struct DUMMY {
+        ui32 Offset;
+        ui32 OffsetHigh;
+    } DUMMYSTRUCTNAME;
+    ui32 hEvent;
+};
+i32 STD_INPUT_HANDLE = -10,STD_OUTPUT_HANDLE = -11,STD_ERROR_HANDLE = -12;
+i32 GENERIC_READ = 0x80000000,GENERIC_WRITE = 0x40000000,CREATE_NEW = 1,OPEN_EXISTING = 3,FILE_ATTRIBUTE_NORMAL = 0x80,INVALID_HANDLE_VALUE = -1,FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100,FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000,FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200,LANG_NEUTRAL = 0x0c00,SUBLANG_DEFAULT = 0x01;
+struct Ptr {
+    array<ui8>@ p;
+};
+lib("kernel32.dll") {
+    ui32 FormatMessageA(ui32, ui32@, ui32, ui32, array<ui8>@@, ui32, ui32@);
+    ui32 GetLastError();
+    ui32 GetCurrentProcess();
+    ui32 GetModuleHandleA(array<ui8>@);
+    ui32 GetCurrentThreadId();
+    ui32 CloseHandle(ui32);
+    ui32 CreateThread(SECURITY_ATTRIBUTES@, ui32, function<ThreadDecl>, ui32@, ui32, ui32@);
+    ui32 WaitForMultipleObjects(ui32, array<ui32>@, ui32, ui32);
+    ui32 AllocConsole();
+    ui32 FreeConsole();
+    ui32 GetStdHandle(ui32);
+    ui32 CreateFileA(array<ui8>@, ui32, ui32, SECURITY_ATTRIBUTES@, ui32, ui32, ui32);
+    ui32 WriteFile(ui32, array<ui8>@, ui32, ui32@, OVERLAPPED@);
+    ui32 ReadFile(ui32, array<ui8>@, ui32, ui32@, OVERLAPPED@);
+    ui32 DeleteFileA(array<ui8>@);
+    ui32 LocalFree(array<ui8>@);
+} kernel32;
+function ui32 WindowProc(ui32 hwnd, ui32 uMsg, ui16 wParam, ui32 lParam) {
+    switch(uMsg) {
+        case 2: {
+            {
+                user32.PostQuitMessage(0);
+                return 0;
+            }
+        }
+        case 15: {
+            {
+                {
+                    PAINTSTRUCT ps;
+                    ui32 hdc = user32.BeginPaint(hwnd, ps);
+                    user32.FillRect(hdc, ps.rcPaint, COLOR_WINDOW + 10);
+                    user32.EndPaint(hwnd, ps);
+                }
+                return 0;
+            }
+        }
+    }
+    return user32.DefWindowProcA(hwnd, uMsg, wParam, lParam);
+}
+function i32 wWinMain() {
+    array<ui8> CLASS_NAME @= str2arr("Sample Window Class");
+    array<ui8> name @= str2arr("BridgeDebugger.exe");
+    ui32 hInstance = kernel32.GetModuleHandleA(name);
+    ui32 err = kernel32.GetLastError();
+    WNDCLASS wc;
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+    user32.RegisterClassA(wc);
+    err = kernel32.GetLastError();
+    ui32 hwnd = user32.CreateWindowExA(0, CLASS_NAME, str2arr("Learn to Program Windows"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+    err = kernel32.GetLastError();
+    if(hwnd == NULL) {
+        user32.UnregisterClassA(CLASS_NAME, hInstance);
+        return 0;
+    }
+    ui32 nCmdShow = SW_SHOW;
+    user32.ShowWindow(hwnd, nCmdShow);
+    MSG msg;
+    while(user32.GetMessageA(msg, NULL, 0, 0)){
+        user32.TranslateMessage(msg);
+        user32.DispatchMessageA(msg);
+    }
+    error(e) {;
+    }
+    user32.UnregisterClassA(CLASS_NAME, hInstance);
+    return 0;
+}
+wWinMain();

@@ -1,0 +1,41 @@
+struct SECURITY_ATTRIBUTES {
+    ui32 nLength;
+    ui32 lpSecurityDescriptor;
+    bool bInheritHandle;
+};
+function ui32 CallbackDecl(array<ui8>@ arg) {
+    return 0;
+}
+struct MyData {
+    i32 val1;
+    i32 val2;
+    function<CallbackDecl> fnCallback;
+};
+function ui32 ThreadDecl(MyData@ arg) {
+    return 0;
+}
+struct OVERLAPPED {
+    ui32 Internal;
+    ui32 InternalHigh;
+    struct DUMMY {
+        ui32 Offset;
+        ui32 OffsetHigh;
+    } DUMMYSTRUCTNAME;
+    ui32 hEvent;
+};
+ui32 STD_INPUT_HANDLE = -10;
+ui32 STD_OUTPUT_HANDLE = -11;
+ui32 STD_ERROR_HANDLE = -12;
+lib("kernel32.dll") {
+    ui32 GetLastError();
+    ui32 GetCurrentProcess();
+    ui32 GetModuleHandleA(array<ui8>@);
+    ui32 GetCurrentThreadId();
+    ui32 CloseHandle(ui32);
+    ui32 CreateThread(SECURITY_ATTRIBUTES@, ui32, function<ThreadDecl>, MyData@, ui32, ui32@);
+    ui32 WaitForMultipleObjects(ui32, array<ui32, 3>@, bool, ui32);
+    ui32 AllocConsole();
+    ui32 FreeConsole();
+    ui32 GetStdHandle(ui32);
+    ui32 WriteFile(ui32, array<ui8>@, ui32, ui32@, OVERLAPPED@);
+} kernel32;

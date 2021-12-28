@@ -1,0 +1,79 @@
+include "user32.bridge";
+include "kernel.bridge";
+ 
+function ui32 WindowProc(ui32   hwnd, ui32 uMsg, ui16   wParam, ui32   lParam) {
+    switch (uMsg)
+    {
+    case 0x0002:
+        user32.PostQuitMessage(0);
+        return 0;
+ 
+    case 0x000F:
+        {
+            PAINTSTRUCT ps;
+            ui32 hdc = user32.BeginPaint(hwnd, ps);
+            user32.FillRect(hdc, ps.rcPaint, COLOR_WINDOW+1);
+            user32.EndPaint(hwnd, ps);
+        }
+        return 0;
+ 
+    }
+    return user32.DefWindowProcA(hwnd, uMsg, wParam, lParam);
+}
+ 
+function i32 wWinMain() {
+    // Register the window class.
+    array<ui8> CLASS_NAME @= str2arr("Sample Window Class");
+    array<ui8> name @= str2arr("BridgeDebugger.exe");
+    
+    ui32 hInstance = kernel32.GetModuleHandleA(name);
+    ui32 err = kernel32.GetLastError();
+    WNDCLASS wc;
+ 
+    wc.lpfnWndProc   = WindowProc;
+    wc.hInstance     = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+ 
+    user32.RegisterClassA(wc);
+    err = kernel32.GetLastError();
+    // Create the window.
+ 
+    ui32 hwnd = user32.CreateWindowExA(
+        0,                              // Optional window styles.
+        CLASS_NAME,                     // Window class
+        str2arr("Learn to Program Windows"),    // Window text
+        WS_OVERLAPPEDWINDOW,            // Window style
+ 
+        // Size and position
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+ 
+        NULL,       // Parent window    
+        NULL,       // Menu
+        hInstance,  // Instance handle
+        NULL        // Additional application data
+        );
+    err = kernel32.GetLastError();
+    if (hwnd == NULL)
+    {
+        user32.UnregisterClassA(CLASS_NAME,hInstance);
+        return 0;
+    }
+    
+    ui32 nCmdShow = SW_SHOW;
+    user32.ShowWindow(hwnd, nCmdShow);
+ 
+    // Run the message loop.
+ 
+    MSG msg;
+    while (user32.GetMessageA(msg, NULL, 0, 0))
+    {
+        user32.TranslateMessage(msg);
+        user32.DispatchMessageA(msg);
+    }
+    error(e) {
+    }
+    user32.UnregisterClassA(CLASS_NAME,hInstance);
+    return 0;
+}
+ 
+wWinMain();

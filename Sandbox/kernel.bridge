@@ -1,0 +1,59 @@
+ 
+struct SECURITY_ATTRIBUTES {
+    ui32   nLength;
+    ui32   lpSecurityDescriptor;
+    bool   bInheritHandle;
+};
+ 
+function ui32 ThreadDecl(ui32@ arg) { 
+    return 0;
+}
+ 
+struct OVERLAPPED {
+  /*ULONG_PTR*/ui32 Internal; // this is not real a pointer, 
+                              // when the request is issued, the system sets this member to STATUS_PENDING 
+                              // and status code for the completed request.
+  /*ULONG_PTR*/ui32 InternalHigh; // this is not a pointer, 
+                                  // the number of bytes transferred for the I/O request, its behavior may change! 
+  struct DUMMY{
+      /*DWORD*/ui32 Offset;
+      /*DWORD*/ui32 OffsetHigh;
+  } DUMMYSTRUCTNAME;
+  /*HANDLE*/ui32 hEvent;
+};
+i32 STD_INPUT_HANDLE = -10;
+i32 STD_OUTPUT_HANDLE = -11;
+i32 STD_ERROR_HANDLE = -12;
+ 
+lib("kernel32.dll") {
+  ui32 GetLastError();
+  ui32 GetCurrentProcess();
+  ui32 GetModuleHandleA(array<ui8>@);//LPCSTR lpModuleName
+  ui32 GetCurrentThreadId();
+  ui32 CloseHandle(ui32);
+  ui32 CreateThread(SECURITY_ATTRIBUTES@,
+                    ui32,
+                    function<ThreadDecl>,
+                    ui32@,
+                    ui32,
+                    ui32@);
+  ui32 WaitForMultipleObjects(ui32 /*nCount*/,
+                              array<ui32>@/*lpHandles*/,
+                              ui32/*bWaitAll*/,
+                              ui32/*dwMilliseconds*/);
+  
+  ui32 AllocConsole(); // returns BOOL
+  ui32 FreeConsole();  // returns BOOL
+  ui32 GetStdHandle(ui32/*DWORD nStdHandle*/); // returns HANDLE, 
+  /*
+    STD_INPUT_HANDLE  (DWORD)-10
+    STD_OUTPUT_HANDLE (DWORD)-11
+    STD_ERROR_HANDLE  (DWORD)-12
+  */
+ 
+  /*BOOL*/ui32 WriteFile(/*HANDLE hFile*/ui32, 
+                         /*LPCVOID lpBuffer*/ array<ui8>@,
+                         /*DWORD nNumberOfBytesToWrite*/ ui32,
+                         /*LPDWORD lpNumberOfBytesWritten*/ ui32@,
+                         /*LPOVERLAPPED lpOverlapped*/OVERLAPPED@);
+} kernel32;

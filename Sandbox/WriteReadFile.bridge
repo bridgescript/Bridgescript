@@ -1,0 +1,82 @@
+include "include/kernel.bridge"
+include "include/console.bridge"
+function ui32 PrintError(string@ txt) {
+    array<ui8> msgBuf;
+    ui32 err = kernel32.GetLastError();
+ 
+    kernel32.FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+                            FORMAT_MESSAGE_FROM_SYSTEM |
+                            FORMAT_MESSAGE_IGNORE_INSERTS,            
+                            0x00000000,                               
+                            err,                                      
+                            LANG_NEUTRAL | SUBLANG_DEFAULT * 1024,    
+                            msgBuf,                                   
+                            0,                                        
+                            0x00000000);                              
+ 
+    Console_Write("ERROR: " + txt + " - " + arr2str(cast<array<ui8,100>>(msgBuf)));
+    kernel32.LocalFree(msgBuf);
+}
+ 
+function bool Test_Write(string@ fileName) {
+    SECURITY_ATTRIBUTES sa;
+    OVERLAPPED ov;
+    ui32 hFile = kernel32.CreateFileA(str2arr(fileName), GENERIC_WRITE, 0, sa, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
+    
+    if (hFile != INVALID_HANDLE_VALUE) {
+        array<ui8> data @= str2arr("This is some test phrase to write to the file.\n\rNext line.");
+        ui32 dwBytesWritten;
+        ui32 res = kernel32.WriteFile(hFile, data, sizeof(data), dwBytesWritten, ov);
+ 
+        if (!res) {
+            PrintError("WriteFile()");
+            kernel32.CloseHandle(hFile);
+        }
+        else {
+            Console_Write("Written " + dwBytesWritten + " bytes to \"" + fileName + "\" successfully!\n");
+            Console_Write(arr2str(data) + "\n");
+            kernel32.CloseHandle(hFile);
+            return true;
+        }
+    }
+    else {
+        PrintError("CretaeFile(CREATE_NEW)");
+        kernel32.DeleteFileA(str2arr(fileName));
+    }
+    return false;
+}
+ 
+function bool Test_Read(string@ fileName) {
+    SECURITY_ATTRIBUTES sa;
+    OVERLAPPED ov;
+    ui32 hFile = kernel32.CreateFileA(str2arr(fileName), GENERIC_READ, 0, sa, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+ 
+    if (hFile != INVALID_HANDLE_VALUE) {
+        array<ui8, 100> data;
+        ui32 cb;
+    
+        if (!kernel32.ReadFile(hFile, data, sizeof(data), cb, ov)) {
+            PrintError("ReadFile()");
+            kernel32.CloseHandle(hFile);
+        }
+        else {
+            string str = data;
+            Console_Write("Read "+ cb +" from \"" + fileName + "\" successfully!\n");
+            Console_Write(str + "\n");
+            kernel32.CloseHandle(hFile);
+            return true;
+        }
+    }
+    else {
+        PrintError("CretaeFile(OPEN_EXISTING)");
+    }
+    return  false;
+}
+ 
+if (Console_Init()) {
+    string fileName = "test.txt";
+    if (Test_Write(fileName)) {
+        Test_Read(fileName);
+    }
+    Console_Term();
+}

@@ -1,0 +1,63 @@
+lib("testdll.dll") {
+    i32 Print(string);
+} t;
+function bool foo(ui32 a0, ui32 aa) {
+    switch(a0) {
+        case 0:case 2: {
+            {
+                a0 = 13;
+                aa = aa;
+                break;
+            }
+        }
+        case 3: {
+            {
+                if(0) {
+                }
+                else {
+                    {
+                    }
+                }
+            }
+        }
+        default: {
+            {
+                if(0) {
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    }
+    ui32 v32 = 10;
+    v32 = v32 / 0;
+    error(err) {;
+        ui32 i = 0;
+        t.Print("ERROR! " + err.name + ", line: " + err.line + " , pos: " + err.position + ", symbol: " + err.symbol);
+    }
+    lib("User32.dll") {
+        ui32 test(ui32, string, string, ui32);
+    } usr;
+    usr.test(1,"","",4);
+ 
+    error(err) {;
+        ui32 i = 0;
+        t.Print("ERROR! " + err.name + ", line: " + err.line + " , pos: " + err.position + ", symbol: " + err.symbol);
+    }
+    ui32 i = 0;
+    if(3) {
+    }
+    else {
+        i = 0;
+    }
+    return false;
+}
+function ui64 f() {
+    foo(0,1);
+    return 0;
+}
+f();
+function function<f> ff() {
+}
+ff();

@@ -1,0 +1,145 @@
+function ui32 FooBool(ui64 a0) {
+    return a0 + 10;
+}
+function ui32 f(ui64 a0, ui32 a1) {
+    return FooBool(a0) + a1;
+}
+function<f> varf = f;
+f(2,3);
+varf(1,2);
+function ui32 f0(function<f> fn) {
+    return f(100,200) + fn(10, 20) - varf(1, 2);
+}
+function<f0> fn0 = f0;
+ui32 res = fn0(f);
+ 
+    lib("User32.dll") {
+        ui32 MessageBoxA(ui32, string, string, ui32);
+    } User3;
+lib("User32.dll") {
+    ui32 MessageBoxA(ui32, string, string, ui32);
+} User32;
+ 
+function ui32 MessageBoxA(ui32 a0, string a1, string a2, ui32 a3){
+    return 0;
+}
+function<MessageBoxA> msgFoo = User32.MessageBoxA;
+//msgFoo(0,"res = " + res,"f0(f):",0);
+User32.MessageBoxA(0,"res = " + res,"f0(f):",0);
+ 
+function i32 local_CallbackTest0() {
+    User32.MessageBoxA(0, "local_CallbackTest0()", "testdll.dll", 0);
+    return -456;
+}
+function i32 local_CallbackTestIntBoolDouble(i32 i, bool b, double d) {
+    User32.MessageBoxA(0, "local_CallbackTestIntBoolDouble(" + i + ", " + b + ", " +d +")", "testdll.dll", 0);
+    return -789;
+}
+struct MyStruct {
+    i64 ll;
+    bool b;
+    i16  s;
+    ui32 u;
+} st;
+function ui32 local_CallbackTestLLIntF(ui64 v64, ui32 v32, function<f> fn) {
+    User32.MessageBoxA(0,"!! local_CallbackTestLLIntF(" + v64 +"," +v32 +" , fn)","local_CallbackTestLLIntF(64, 32, fn)",0);
+    return fn(v64, v32);
+}
+lib ("testdll.dll") {
+    i32 CallbackTest6Int(i32,i32,i32,i32,i32,i32);
+    i32 CallbackTest0(function<local_CallbackTest0>, i32, bool);
+    i32 CallbackTestIntBoolDouble(function<local_CallbackTestIntBoolDouble>);
+    //MyStruct CallbackTestRetMyStruct();
+    function<f> CallbackTestFooRetF(function<f>);
+    function<f> CallbackTestIntRetF(i32);
+    i32 CallbackTestCBRetInt(function<f>);
+    ui32 CallbackTestLLIntF(ui64, ui32, function<local_CallbackTestLLIntF>);
+    MyStruct@ TestPtr(MyStruct@, ui32@);
+} testdll;
+    ui32 val32 = 20;
+ 
+    st.b = true;
+    st.ll= 123456789;
+    st.s = 5;
+    st.u = 123456;
+ 
+ User32.MessageBoxA(0,"st.s = " + st.s ,"TestPtr()",0);
+ 
+MyStruct st1, st2;
+st1 = testdll.TestPtr(st, val32);
+User32.MessageBoxA(0,"st1 = TestPtr() val32: " + val32 + " , " + st.b + ", " +st.ll + "," +st.s + "," + st.u,"TestPtr()",0);
+st2 @= testdll.TestPtr(st, val32);
+User32.MessageBoxA(0,"st2 @= TestPtr() val32: " + val32 + " , " + st2.b + ", " +st2.ll + "," +st2.s + "," + st2.u,"TestPtr()",0);
+st2.ll = 220000;
+st1 = testdll.TestPtr(st, val32);
+User32.MessageBoxA(0,"return: val32: " + val32 + " , " + st1.b + ", " +st1.ll + "," +st1.s + "," + st1.u,"TestPtr()",0);
+ 
+res *= (testdll.CallbackTest6Int(0,1,2,3,4,5) + 2);
+User32.MessageBoxA(0,"*=CallbackTest6Int(0,1,2,3,4,5) = " + res,"text: ",0);
+function<local_CallbackTestIntBoolDouble> fnIntBoolDouble = local_CallbackTestIntBoolDouble;
+testdll.CallbackTestIntBoolDouble(fnIntBoolDouble);
+testdll.CallbackTestIntBoolDouble(local_CallbackTestIntBoolDouble);
+testdll.CallbackTest0(local_CallbackTest0, 2, true);
+ 
+function<f> fnExtern = testdll.CallbackTestFooRetF(f);
+res = fnExtern(222, 22);
+User32.MessageBoxA(0,"fnExtern(222, 22) = " + res,"CallbackTEstFooRetF(f)",0);
+ 
+fnExtern = testdll.CallbackTestFooRetF(varf);
+res = fnExtern(333, 33);
+User32.MessageBoxA(0,"fnExtern(333, 33) = " + res,"CallbackTEstFooRetF(varf)",0);
+ 
+    //testdll.CallbackTestIntRetF(333)(1,3);
+fnExtern = testdll.CallbackTestIntRetF(333);
+res = fnExtern(33, 11);
+User32.MessageBoxA(0,"fnExtern(33, 11) = " + res,"CallbackTestIntRetF(333)",0);
+ 
+res = testdll.CallbackTestCBRetInt(fnExtern);
+User32.MessageBoxA(0,"fnExtern(123, 23) = " + res,"CallbackTestCBRetInt(fnExtern)",0);
+    
+res = testdll.CallbackTestLLIntF(64, 32, local_CallbackTestLLIntF);
+User32.MessageBoxA(0,"local_CallbackTestIntBoolDouble() = " + res,"CallbackTestLLIntF(64, 32, local_CallbackTestIntBoolDouble)",0);
+    //testdll.CallbackTestRetMyStruct();
+        //f();
+//f1();
+//f2(abc.b);
+ 
+//User32.MessageBoxA(0,"user32_0","text: " + foo0(abc.b, 0),0,0);
+//User32.MessageBoxA(0,"user32_1","text: " + f(),0);
+//User32.MessageBoxA(0,"user32_1","text: " + f1(),0);
+//User32.MessageBoxA(0,"user32_1","text: " + f2(),0);
+ 
+/*
+ui8 v0,v1,v2,v3,v4,v5,v7,v8,v9;
+ui8 v10,v11,v12,v13,v14,v15,v17,v18,v19;
+ui8 v20,v21,v22,v23,v24,v25,v27,v28,v29;
+ui8 v30,v31,v32,v33,v34,v35,v37,v38,v39;
+ui8 v40,v41,v42,v43,v44,v45,v47,v48,v49;
+ui8 v50,v51,v52,v53,v54,v55,v57,v58,v59;
+ui8 v60,v61,v62,v63,v64,v65,v67,v68,v69;
+ui8 v70,v71,v72,v73,v74,v75,v77,v78,v79;
+ui8 v80,v81,v82,v83,v84,v85,v87,v88,v89;
+ui8 v90,v91,v92,v93,v94,v95,v97,v98,v99;
+ 
+ui8 v100,v101,v102,v103,v104,v105,v107,v108,v109;
+ui8 v110,v111,v112,v113,v114,v115,v117,v118,v119;
+ui8 v120,v121,v122,v123,v124,v125,v127,v128,v129;
+ui8 v130,v131,v132,v133,v134,v135,v137,v138,v139;
+ui8 v140,v141,v142,v143,v144,v145,v147,v148,v149;
+ui8 v150,v151,v152,v153,v154,v155,v157,v158,v159;
+ui8 v160,v161,v162,v163,v164,v165,v167,v168,v169;
+ui8 v170,v171,v172,v173,v174,v175,v177,v178,v179;
+ui8 v180,v181,v182,v183,v184,v185,v187,v188,v189;
+ui8 v190,v191,v192,v193,v194,v195,v197,v198,v199;
+ 
+ui8 v200,v201,v202,v203,v204,v205,v207,v208,v209;
+ui8 v210,v211,v212,v213,v214,v215,v217,v218,v219;
+ui8 v220,v221,v222,v223,v224,v225,v227,v228,v229;
+ui8 v230,v231,v232,v233,v234,v235,v237,v238,v239;
+ui8 v240,v241,v242,v243,v244,v245,v247,v248,v249;
+ui8 v250,v251,v252,v253,v254,v255,v257,v258,v259;
+ui8 v260,v261,v262,v263,v264,v265,v267,v268,v269;
+ui8 v270,v271,v272,v273,v274,v275,v277,v278,v279;
+ui8 v280,v281,v282,v283,v284,v285,v287,v288,v289;
+ui8 v290,v291,v292,v293,v294,v295,v297,v298,v299;
+*/

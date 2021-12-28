@@ -1,0 +1,11 @@
+Scope::DestroyLocalVariables() for(each type) pType->
+
+  Type::Destroy(0, 0) for(each Variable) pVariable->
+
+    Variable::Destroy(pMemoryBlock, offset);
+
+      *DELETE* Variable::DestructReference(memory, pAggregateType, pMemoryBlock, offset, m_pType->GetPassBy() != Type::BY_VALUE) if (Aggregate) pAggregateType->
+
+	AggregateType::DestructSubVariables(pVariableMemoryBlock, variableOffset) for(each type) pSubType->
+
+	  Type::Destroy(pMemoryBlock, offset);

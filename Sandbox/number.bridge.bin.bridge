@@ -1,0 +1,102 @@
+ui32 _v_;
+_v_ @= 00000000000000000000000b;
+_v_ @= _v_;
+function ui32@ f(ui32 v) {
+    return v;
+}
+f(_v_ + -1) = _v_;
+lib("testdll.dll") {
+    i32 CallbackTest6Int(i32, i32, i32, i32, i32, i32);
+    i32@ RetRef(i32@);
+    i32 Print(string);
+} test;
+ui64 d = 123,s = 55,w = 9;
+float x = -123;
+x = -123 + d * (s + w) - 1.2;
+x = 0.01;
+x = -0.02;
+x = .01;
+x = -.01;
+x = 33e-1 + 10;
+x = -21e-12;
+x = 21e+1;
+x = -.0012e+2;
+x = -21.02e+23;
+x = 321.012e+3;
+array<ui32, 2> arr;
+arr[1b] = 100;
+x = 1 + (0xdba0);
+struct ST {
+    bool v0;
+    ui8 v1;
+    ui64 v2;
+    ui32 v3;
+    struct SubST {
+        ui16 v0;
+        i16 v1;
+    } v4;
+    i32 v5;
+    SubST v6;
+    ui8 v7;
+    i8 v8;
+} st;
+function ui32 Print(ST@ st, string type) {
+    test.Print("------ " + type + " -----\n");
+    test.Print("st.v0=" + st.v0 + "\n");
+    test.Print("st.v1=" + st.v1 + "\n");
+    test.Print("st.v2=" + st.v2 + "\n");
+    test.Print("st.v3=" + st.v3 + "\n");
+    test.Print("st.v4.v0=" + st.v4.v0 + "\n");
+    test.Print("st.v4.v1=" + st.v4.v1 + "\n");
+    test.Print("st.v5=" + st.v5 + "\n");
+    test.Print("st.v6.v0=" + st.v6.v0 + "\n");
+    test.Print("st.v6.v1=" + st.v6.v1 + "\n");
+    test.Print("st.v7=" + st.v7 + "\n");
+    test.Print("st.v8=" + st.v8 + "\n");
+    test.Print("--------------\n");
+}
+st.v0 = true;
+st.v1 = 1;
+st.v2 = 2;
+st.v3 = 3;
+st.v4.v0 = 41;
+st.v4.v1 = 42;
+st.v5 = 5;
+st.v6.v0 = 61;
+st.v6.v1 = 62;
+st.v7 = 7;
+st.v8 = 8;
+function ST@@ GetStByRef(ST@@ a0) {
+    ST st;
+    st.v0 = true;
+    st.v1 = 11;
+    st.v2 = 22;
+    st.v3 = 33;
+    st.v4.v0 = 441;
+    st.v4.v1 = 442;
+    st.v5 = 55;
+    st.v6.v0 = 661;
+    st.v6.v1 = 662;
+    st.v7 = 77;
+    st.v8 = 88;
+    a0 @= st;
+    return st;
+}
+struct SubST {
+    ui16 v0;
+    i16 v1;
+} subSt;
+function SubST@ GetSubST(SubST@@ a) {
+    ST st;
+    st.v4.v0 = 200;
+    a.v0 = 1001;
+    a.v1 = 2002;
+    return st.v4;
+}
+subSt.v0 = 100;
+subSt.v1 = 200;
+subSt @= GetSubST(subSt);
+test.Print("subSt.v0=" + subSt.v0 + "\n");
+i32 i = 10,i1 = 200;
+test.Print("" + i + "\n");
+test.Print("i=" + (test.RetRef(i) += i1) + "\n");
