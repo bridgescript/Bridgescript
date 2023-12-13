@@ -140,7 +140,9 @@ IDB_BITMAP3             BITMAP                  "res\\bmp00002.bmp"
 
 IDB_BITMAP4             BITMAP                  "res\\bitmap4.bmp"
 
-IDB_BITMAP5             BITMAP                  "res\\bitmap5.bmp"
+IDB_BITMAP5             BITMAP                  "res\\markers.bmp"
+
+//IDB_BITMAP5             BITMAP                  "res\\bitmap5.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

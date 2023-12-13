@@ -243,13 +243,13 @@ void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, Thr
     int scrollPos = GetScrollPos(SB_VERT);
     int mi = 0, ma = 0;
     GetScrollRange(SB_VERT, &mi, &ma);
-    int vl = scrollPos / pFrame->GetImgSize() + ((scrollPos % pFrame->GetImgSize() != 0) ? 1 : 0);
+    int vl = scrollPos / pFrame->GetImgSizeY() + ((scrollPos % pFrame->GetImgSizeY() != 0) ? 1 : 0);
     RECT r;
     ctl.GetClientRect(&r);
     //ctl.GetWindowRect(&wr);
     //ctl.GetRect(&rr);
     //ui32 vl = ctl.GetFirstVisibleLine();
-    if ((line < vl) || (line >= (r.bottom / pFrame->GetImgSize() + vl))) { // scroll
+    if ((line < vl) || (line >= (r.bottom / pFrame->GetImgSizeY() + vl))) { // scroll
 
     //if (curPos > line) {
       //  line = -(curPos - line);
@@ -258,7 +258,7 @@ void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, Thr
         i32 newLine = line - vl;
         //} // cur:3 line:10 -> 10-3 = 7 , -(3 - 10)
         int totalLines = ctl.GetLineCount();
-        int maxscrollLine = totalLines - (r.bottom / pFrame->GetImgSize()) - 1;
+        int maxscrollLine = totalLines - (r.bottom / pFrame->GetImgSizeY()) - 1;
         if (maxscrollLine < line) {
             newLine -= line - maxscrollLine;
         }

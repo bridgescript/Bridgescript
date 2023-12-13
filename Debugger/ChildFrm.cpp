@@ -30,7 +30,8 @@ CChildFrame::CChildFrame()
     m_highlightType = HIGHLIGHT_OFF;
     m_highlightLine = 0;
     m_rectBorder.left = 25;
-    m_imgSize = 20;
+    m_imgSizeY = 15;
+	m_imgSizeX = 20;
     //m_bp.SetPoint(0, 0);
     //CPngImage img;
     m_pos = 0;
@@ -107,8 +108,8 @@ BOOL CChildFrame::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
         //bmp.DeleteObject();
         bmp.LoadBitmap(uiBmpId);
         bmp.GetBitmap(&bmpObj);
-        m_imgSize = bmpObj.bmHeight;
-        m_imageBpList.Create(m_imgSize, m_imgSize, nFlags, 0, 0);
+        //m_imgSizeY = 15;//bmpObj.bmHeight;
+        m_imageBpList.Create(m_imgSizeX, m_imgSizeY, nFlags, 0, 0);
         m_imageBpList.Add(&bmp, RGB(255, 0, 0));
        // m_brushBkg.CreateSolidBrush(0x00f0f0f0); // background color
         return TRUE;
@@ -179,9 +180,9 @@ void CChildFrame::OnLButtonUp(UINT nFlags, CPoint point)
         m_pos = pos;
         m_bp = point;
         m_bp.y += m_pos;
-        m_bp.y = (m_bp.y / m_imgSize) * m_imgSize;// +2;
+        m_bp.y = (m_bp.y / m_imgSizeY) * m_imgSizeY;// +2;
         //BREAKPOINT_MARKER marker = BREAKPOINT_INVALID;
-        int line = m_bp.y / m_imgSize;
+        int line = m_bp.y / m_imgSizeY;
         BREAKPOINT br;
         br.m_marker = BREAKPOINT_INVALID;
         br.m_y = m_bp.y;
@@ -213,7 +214,7 @@ void CChildFrame::OnLButtonUp(UINT nFlags, CPoint point)
 void CChildFrame::SetBreakpointMarker(int line, BREAKPOINT_MARKER marker) {
     BREAKPOINT br;
     br.m_marker = marker; 
-    br.m_y = line * m_imgSize;
+    br.m_y = line * m_imgSizeY;
     if (marker == BREAKPOINT_NONE) {
         m_breakpoints.erase(line);
     }
@@ -229,7 +230,7 @@ void CChildFrame::SetBreakpointMarker(int line, BREAKPOINT_MARKER marker) {
 void CChildFrame::SetHighlight(int line, HIGHLIGHT_TYPE type) {
     m_highlightLine = line;
     m_highlightType = type;
-    int nPos = line * m_imgSize;
+    int nPos = line * m_imgSizeY;
     //RECT r;
     //GetClientRect(&r);
     //r.right = m_rectBorder.left;
@@ -295,15 +296,16 @@ void CChildFrame::OnPaint()
     //pWnd->GetScrollRange(SB_VERT, &mi, &ma);
 
     SIZE sz;
-    sz.cy = sz.cx = m_imgSize;
+    sz.cy = m_imgSizeY;
+	sz.cx = m_imgSizeX;
 
     POINT po;
     int img = -1; // ?
 
     po.x = IMG_X_OFFSET;// 3;
     for (map<int, BREAKPOINT>::iterator it = m_breakpoints.begin(); it != m_breakpoints.end(); ++it) {
-        po.y = (it->first * m_imgSize) - m_pos + IMG_Y_OFFSET;//it->second.m_y - m_pos + 1;// -1;
-        if (po.y + m_imgSize <= 0) continue;
+        po.y = (it->first * m_imgSizeY) - m_pos + IMG_Y_OFFSET;//it->second.m_y - m_pos + 1;// -1;
+        if (po.y + m_imgSizeY <= 0) continue;
         if (po.y >= rect.bottom) break;
         //m_imageBpList.SetOverlayImage(img, 1);
         //m_imageBpList.DrawIndirect(&dc, ii, po, sz, CPoint(0, 0), INDEXTOOVERLAYMASK(1));
@@ -334,7 +336,7 @@ void CChildFrame::OnPaint()
                 break;
         }
         if (img != -1) {
-            po.y = (m_highlightLine * m_imgSize) - m_pos + IMG_Y_OFFSET;
+            po.y = (m_highlightLine * m_imgSizeY) - m_pos + IMG_Y_OFFSET;
             //po.x = IMG_X_OFFSET;// 6;
             m_imageBpList.DrawIndirect(&dc, img, po, sz, CPoint(0, 0));
         }
