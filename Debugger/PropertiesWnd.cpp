@@ -124,12 +124,12 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_wndThreadList.SetImageList(&m_imageList, LVSIL_SMALL);
     //m_wndWatchList.SetImageList(&m_imageList, LVSIL_SMALL);
 
-    uiBmpId = /*theApp.m_bHiColorIcons ? IDB_BREAKPOINTS : */IDB_BITMAP2;
+    uiBmpId = /*theApp.m_bHiColorIcons ? IDB_BREAKPOINTS : */IDB_BITMAP5;//IDB_BITMAP2;
     bmp.DeleteObject();
     bmp.LoadBitmap(uiBmpId);
     bmp.GetBitmap(&bmpObj);
     
-    m_imageBpList.Create(16, bmpObj.bmHeight, nFlags, 0, 0);
+    m_imageBpList.Create(20, bmpObj.bmHeight, nFlags, 0, 0);
     m_imageBpList.Add(&bmp, RGB(255, 0, 0));
 
     m_wndBreakpointList.SetImageList(&m_imageBpList, LVSIL_SMALL);

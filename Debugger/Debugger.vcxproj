@@ -298,6 +298,7 @@
     <Image Include="res\file_vie.ico" />
     <Image Include="res\file_view.ico" />
     <Image Include="res\file_view_hc.ico" />
+    <Image Include="res\markers.bmp" />
     <Image Include="res\menuimages.bmp" />
     <Image Include="res\menuimages_hc.bmp" />
     <Image Include="res\MFCApplication1.ico" />

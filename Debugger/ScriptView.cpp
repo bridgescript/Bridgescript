@@ -1367,6 +1367,7 @@ void CScriptView::ParseText() {
     CHARFORMAT cfm;
     ctl.GetSelectionCharFormat(cfm);
     cfm.cbSize = sizeof(cfm);
+	bool bLongComment = false;
     // Dump every line of text of the rich edit control.
     for (int k = 0; k < nLineCount; k++)
     {
@@ -1380,30 +1381,75 @@ void CScriptView::ParseText() {
         ctl.GetLine(k, p, nLineLength + 1);
         strText.SetAt(nLineLength, _T('\0')); // null terminate
         strText.ReleaseBuffer(nLineLength + 1);
+		int LongCommentBeginPos = 0;
         CString str;
         for (int i = 0; i <= nLineLength; ++i) {
             TCHAR ch = strText[i];
-            if (isalnum(ch)) {
-                str.AppendChar(ch);
-            }
-            else {
-                if (str.GetLength()) {
-                    KeyWordData* pkw = 0;
-                    if (m_keywords.Lookup(str, (void*&)pkw)) {
-                        //return pkw;
-                        //long b = i - str.GetLength() + start, e = i + start;
-                        ctl.SetSel(pos + i - str.GetLength(), pos + i);
-                        cfm.crTextColor = pkw->color;
-                        cfm.dwMask = CFM_COLOR;// | CFM_BOLD;
-                        cfm.dwEffects = 0;//CFE_BOLD | CFE_AUTOCOLOR;
-                        ctl.SetSelectionCharFormat(cfm);
-                        //cfm.dwMask = CFM_BOLD;
-                        //cfm.dwEffects = CFE_BOLD;
-                        //ctl.SetSelectionCharFormat(cfm);
-                    }
-                    str = "";
-                }
-            }
+			if (!bLongComment) {
+				if (isalnum(ch)) {
+					str.AppendChar(ch);
+				}
+				else if (str.GetLength()) {
+					KeyWordData* pkw = 0;
+					if (m_keywords.Lookup(str, (void*&)pkw)) {
+						//return pkw;
+						//long b = i - str.GetLength() + start, e = i + start;
+						ctl.SetSel(pos + i - str.GetLength(), pos + i);
+						cfm.crTextColor = pkw->color;
+						cfm.dwMask = CFM_COLOR;// | CFM_BOLD;
+						cfm.dwEffects = 0;//CFE_BOLD | CFE_AUTOCOLOR;
+						ctl.SetSelectionCharFormat(cfm);
+						//cfm.dwMask = CFM_BOLD;
+						//cfm.dwEffects = CFE_BOLD;
+						//ctl.SetSelectionCharFormat(cfm);
+					}
+					str = "";
+				}
+
+				if ((ch == _T('/')) && (i + 1 <= nLineLength) && (strText[i + 1] == _T('/'))) // comment out rest of the lilne
+				{
+					const COLORREF rgbGray = 0x00909090;
+					//KeyWordData pkw(rgbGray);
+					ctl.SetSel(pos + i, pos + nLineLength);
+					cfm.crTextColor = rgbGray;
+					cfm.dwMask = CFM_ITALIC | CFM_COLOR;// | CFM_BOLD;
+					cfm.dwEffects = CFE_ITALIC;//CFE_BOLD | CFE_AUTOCOLOR;
+					ctl.SetSelectionCharFormat(cfm);
+					break;
+				}
+
+				if ((ch == _T('/')) && (i + 1 <= nLineLength) && (strText[i + 1] == _T('*'))) // comment out until end of comment marker - "*/"
+				{
+					bLongComment = true;
+					LongCommentBeginPos = i;
+				}
+			}
+			else {
+				if ((ch == _T('*')) && (i + 1 <= nLineLength) && (strText[i + 1] == _T('/'))) // comment out until end of comment marker - "*/"
+				{
+					bLongComment = false;
+					str.AppendChar(ch);
+					str.AppendChar(strText[i + 1]);
+					const COLORREF rgbGray = 0x00909090;
+					ctl.SetSel(pos + LongCommentBeginPos, pos + i + 2);
+					cfm.crTextColor = rgbGray;
+					cfm.dwMask = CFM_ITALIC | CFM_COLOR;// | CFM_BOLD;
+					cfm.dwEffects = CFE_ITALIC;//CFE_BOLD | CFE_AUTOCOLOR;
+					ctl.SetSelectionCharFormat(cfm);
+				}
+				else {
+					str.AppendChar(ch);
+					if (i == nLineLength) {
+						const COLORREF rgbGray = 0x00909090;
+						//KeyWordData pkw(rgbGray);
+						ctl.SetSel(pos + LongCommentBeginPos, pos + nLineLength);
+						cfm.crTextColor = rgbGray;
+						cfm.dwMask = CFM_ITALIC | CFM_COLOR;// | CFM_BOLD;
+						cfm.dwEffects = CFE_ITALIC;//CFE_BOLD | CFE_AUTOCOLOR;
+						ctl.SetSelectionCharFormat(cfm);
+					}
+				}
+			}
         }
         pos += nLineLength + 1;
 
