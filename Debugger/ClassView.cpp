@@ -88,64 +88,30 @@ void CFunctionDefTree::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     CTreeCtrl::OnLButtonDblClk(nFlags, point);
     // TODO: Add your message handler code here and/or call default
-    //OpenFile();
+
     HTREEITEM hItem = GetSelectedItem();
-    //if (SymbolStore *pSymbolStore = theApp.GetSymbolStore()) {
-        if (Node *pNode = (Node*)GetItemData(hItem)) {
-            SYMBOL_DESC symDesc;
-            pNode->GetSymbolDesc(symDesc);
-            CMainFrame *pMainFrame = (CMainFrame*)theApp.m_pMainWnd;
-            if (CScriptView *pScriptView = pMainFrame->GetScriptView(symDesc.m_fileId)) {
-                //ui32 line = stoul(string(_bstr_t(strLine)));
-                pScriptView->HighlightLine(HIGHLIGHT_FUNC_DEF, -1, symDesc.m_line - START_POSITION_OFFSET, INVALID_THREAD_ID, 0);
-                return;
-            }
-        }
-        POSITION pos = theApp.m_pDocManager->GetFirstDocTemplatePosition();
-        if (CDocTemplate *pDocTemplate = theApp.m_pDocManager->GetNextDocTemplate(pos)) {
-            CDocument* pOpenDocument = NULL;
-            POSITION docPos = pDocTemplate->GetFirstDocPosition();
-            while (docPos) {
-                pOpenDocument = pDocTemplate->GetNextDoc(docPos);
-                CString path = pOpenDocument->GetPathName();
-                POSITION pos = pOpenDocument->GetFirstViewPosition();
-                static_cast<CScriptView*>(pOpenDocument->GetNextView(pos))->ClearHighlight(false);
-            }
-        }
-
-    //}
+	if (Node* pNode = (Node*)GetItemData(hItem)) {
+		SYMBOL_DESC symDesc;
+		pNode->GetSymbolDesc(symDesc);
+		CMainFrame* pMainFrame = (CMainFrame*)theApp.m_pMainWnd;
+		if (CScriptView* pScriptView = pMainFrame->GetScriptView(symDesc.m_fileId)) {
+			//ui32 line = stoul(string(_bstr_t(strLine)));
+			pScriptView->HighlightLine(HIGHLIGHT_FUNC_DEF, -1, symDesc.m_line - START_POSITION_OFFSET, INVALID_THREAD_ID, 0);
+			return;
+		}
+	}
+	POSITION pos = theApp.m_pDocManager->GetFirstDocTemplatePosition();
+	if (CDocTemplate* pDocTemplate = theApp.m_pDocManager->GetNextDocTemplate(pos)) {
+		CDocument* pOpenDocument = NULL;
+		POSITION docPos = pDocTemplate->GetFirstDocPosition();
+		while (docPos) {
+			pOpenDocument = pDocTemplate->GetNextDoc(docPos);
+			CString path = pOpenDocument->GetPathName();
+			POSITION pos = pOpenDocument->GetFirstViewPosition();
+			static_cast<CScriptView*>(pOpenDocument->GetNextView(pos))->ClearHighlight(false);
+		}
+	}
 }
-
-//void CFunctionDefTree::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//    // TODO: Add your control notification handler code here
-//    HTREEITEM hItem = ((NMTREEVIEWW*)pNMHDR)->itemNew.hItem;
-//    *pResult = 0;
-//    //HTREEITEM hItem = GetSelectedItem();
-//    //if (SymbolStore *pSymbolStore = theApp.GetSymbolStore()) {
-//    if (Node *pNode = (Node*)GetItemData(hItem)) {
-//        SYMBOL_DESC symDesc;
-//        pNode->GetSymbolDesc(symDesc);
-//        CMainFrame *pMainFrame = (CMainFrame*)theApp.m_pMainWnd;
-//        if (CScriptView *pScriptView = pMainFrame->GetScriptView(symDesc.m_fileId)) {
-//            //ui32 line = stoul(string(_bstr_t(strLine)));
-//            pScriptView->HighlightLine(HIGHLIGHT_BREAKPOINT, -1, symDesc.m_line - START_POSITION_OFFSET, INVALID_THREAD_ID, 0);
-//        }
-//    }
-//    else {
-//        POSITION pos = theApp.m_pDocManager->GetFirstDocTemplatePosition();
-//        if (CDocTemplate *pDocTemplate = theApp.m_pDocManager->GetNextDocTemplate(pos)) {
-//            CDocument* pOpenDocument = NULL;
-//            POSITION docPos = pDocTemplate->GetFirstDocPosition();
-//            while (docPos) {
-//                pOpenDocument = pDocTemplate->GetNextDoc(docPos);
-//                CString path = pOpenDocument->GetPathName();
-//                POSITION pos = pOpenDocument->GetFirstViewPosition();
-//                static_cast<CScriptView*>(pOpenDocument->GetNextView(pos))->ClearHighlight();
-//            }
-//        }
-//    }
-//}
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -234,10 +200,6 @@ void CClassView::OnSize(UINT nType, int cx, int cy)
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
-//
-//void CClassView::OnLButtonDblClk(UINT, CPoint) {
-//
-//}
 
 void CClassView::FillClassView()
 {
@@ -274,7 +236,6 @@ void CClassView::FillClassView()
                 if (res.second) {
                     hItem = m_wndClassView.InsertItem(_bstr_t(fileName.c_str()), 0, 0, hRoot);
                     m_wndClassView.SetItemState(hItem, TVIS_EXPANDED, TVIS_EXPANDED);
-                    //m_wndClassView.Expand(hItem, TVE_EXPAND);
                     res.first->second.hItem = hItem;
                 }
                 else {
@@ -310,7 +271,6 @@ void CClassView::FillClassView()
                             retType += ")";
                             {
                                 HTREEITEM h = m_wndClassView.InsertItem(_bstr_t(retType.c_str()), 5, 5, hItem);
-                                //m_wndClassView.SetItemData(h, 0);
                             }
                             break;
                         default:
@@ -345,8 +305,6 @@ void CClassView::FillClassView()
                 if (res.second) {
                     hItem = m_wndClassView.InsertItem(_bstr_t(fileName.c_str()), 0, 0, hRoot);
                     m_wndClassView.SetItemState(hItem, TVIS_EXPANDED, TVIS_EXPANDED);
-                    //m_wndClassView.SetItemData(hItem, 0);
-                    //m_wndClassView.Expand(hItem, TVE_EXPAND);
                     res.first->second.hItem = hItem;
                 }
                 else {

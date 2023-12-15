@@ -218,8 +218,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
-    //Debugger::GetInstance().SetDebuggerNotify(&m_DebuggerEventsImpl);
-
     return 0;
 }
 
@@ -228,7 +226,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	if( !CMDIFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
 	// TODO: Modify the Window class or styles here by modifying
-	//  the CREATESTRUCT cs
 
 	return TRUE;
 }
@@ -723,27 +720,18 @@ afx_msg LRESULT CMainFrame::OnClearStartupScript(WPARAM wParam, LPARAM lParam) {
     return 0;
 }
 
-//afx_msg LRESULT CMainFrame::OnScriptCompileError(WPARAM wParam, LPARAM lParam) {
-//    if (CScriptView *pScriptView = GetScriptView(wParam)) {
-//        pScriptView->HighlightLine(HIGHLIGHT_COMPILE_ERROR, wParam, lParam, INVALID_THREAD_ID, 0);
-//    }
-//    return 0;
-//}
-
 void CMainFrame::PropagateBreakpoints() {
     m_wndProperties.PropagateBreakpoints();
     m_wndClassView.FillClassView();
 }
 
 afx_msg LRESULT CMainFrame::OnBeginThread(WPARAM wParam, LPARAM lParam) {
-    //m_wndProperties.ClearStackList();
     m_wndProperties.DisableTab(TRUE, wParam);
     m_wndProperties.OnBeginThread(wParam);
     return 0;
 }
 
 afx_msg LRESULT CMainFrame::OnEndThread(WPARAM wParam, LPARAM lParam) {
-    //m_wndProperties.ClearStackList();
     m_wndProperties.DisableTab(FALSE, wParam);
     m_wndProperties.OnEndThread(wParam);
     return 0;
@@ -755,7 +743,6 @@ afx_msg LRESULT CMainFrame::OnEndScriptThread(WPARAM wParam, LPARAM lParam) {
     theApp.UnLoadScript();
     //TODO("Must release Runner in the MFCApp thread!");
     theApp.ReleaseScriptThreadRunner();
-   // m_pRunner = smart_ptr<ScriptRunner>(0);
     return 0;
 }
 

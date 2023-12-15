@@ -13,13 +13,7 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputBar
-//string BuildString() {
-//    string s;
-//    for (int i = 0; i <= 0xff; ++i) {
-//        s.push_back(i);
-//    }
-//    return s;
-//}
+
 void COutputWnd::Output::Print(PRINT_TYPE type, string &text) {
     switch (type) {
         case BUILD_OUT:
@@ -31,10 +25,6 @@ void COutputWnd::Output::Print(PRINT_TYPE type, string &text) {
             m_pOutputWnd->SetActiveTab(1);
             break;
     }
-    /*m_pOutputWnd->m_wndOutputBuild.SetFont(&afxGlobalData.fontMarlett);
-    m_pOutputWnd->m_wndOutputBuild.AddString(_bstr_t(BuildString().c_str()));
-    m_pOutputWnd->m_wndOutputBuild.SetFont(&afxGlobalData.fontRegular);
-*/
 }
 
 void COutputWnd::Output::Clear() {
@@ -145,16 +135,10 @@ void COutputWnd::AdjustHorzScroll(CListBox& wndListBox)
 
 void COutputWnd::FillBuildWindow()
 {
-	//m_wndOutputBuild.AddString(_T("Build output is being displayed here."));
-	//m_wndOutputBuild.AddString(_T("The output is being displayed in rows of a list view"));
-	//m_wndOutputBuild.AddString(_T("but you can change the way it is displayed as you wish..."));
 }
 
 void COutputWnd::FillDebugWindow()
 {
-	//m_wndOutputDebug.AddString(_T("Debug output is being displayed here."));
-	//m_wndOutputDebug.AddString(_T("The output is being displayed in rows of a list view"));
-	//m_wndOutputDebug.AddString(_T("but you can change the way it is displayed as you wish..."));
 }
 
 void COutputWnd::FillFindWindow()
@@ -285,19 +269,9 @@ void COutputList::OnLbnDblclk()
     }
 }
 
-
-//void COutputWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
-//{
-//    // TODO: Add your message handler code here and/or call default
-//
-//    CDockablePane::OnLButtonDblClk(nFlags, point);
-//}
-
-
 void COutputList::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
     // TODO: Add your message handler code here and/or call default
-    //if (((COutputWnd*)GetParent())->m
     OnLbnDblclk();
     CListBox::OnLButtonDblClk(nFlags, point);
 }
@@ -307,15 +281,6 @@ afx_msg LRESULT COutputWnd::OnOnScriptRuntimeError(WPARAM wParam, LPARAM lParam)
     m_wndTabs.SetActiveTab(wParam);
     return 0;
 }
-
-
-//void COutputList::DeleteItem(LPDELETEITEMSTRUCT lpDeleteItemStruct)
-//{
-//    // TODO: Add your specialized code here and/or call the base class
-//
-//    CListBox::DeleteItem(lpDeleteItemStruct);
-//}
-
 
 void COutputList::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 {

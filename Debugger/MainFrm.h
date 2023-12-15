@@ -20,19 +20,6 @@ class CMainFrame : public CMDIFrameWndEx
 public:
 	CMainFrame();
 
-// Attributes
-public:
-
-// Operations
-public:
-    /*void OnStop();
-    void OnRun();
-    void OnPause();
-    void OnStepIn();
-    void OnStep();
-    void OnStepOut();
-    void OnSetBreakPoint(ui32 fileId, ui32 line, bool set);*/
-    //void OnBreakHit(ui32 fileId, ui32 line);
 // Overrides
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -113,14 +100,12 @@ private:
 
     DEBUGGER_STATES m_debuggerState;
     ScriptRunner   *m_pRunner;
-    //SymbolStore *m_pSymbolStore;
 
 public:
     CScriptView *GetScriptView(ui32 fileId);
     CScriptView *GetScriptView(LPCTSTR filePath);
     inline BOOL IsStartUpScriptSet() { return m_wndFileTree.IsStartUpScriptSet(); };
     CString GetStartUpScriptPath() { return m_wndFileTree.GetStartUpScriptPath(); };
-    //void SetSymbolStore(SymbolStore* pSymbolStore) { m_pSymbolStore = pSymbolStore; }
     DebuggerEvents* GetDebuggerEvents() { return &m_DebuggerEventsImpl; }
     StdOutInterface* GetStdOutInterface() { return &m_wndOutput.m_Output; }
     afx_msg void OnDestroy();
@@ -138,7 +123,6 @@ protected:
     afx_msg LRESULT OnDebuggerBreakHit(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnSetStartupScript(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnClearStartupScript(WPARAM wParam, LPARAM lParam);
-    //afx_msg LRESULT OnScriptCompileError(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnBeginThread(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnEndThread(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnEndScriptThread(WPARAM wParam, LPARAM lParam);

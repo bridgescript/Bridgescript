@@ -76,8 +76,6 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     m_wndThreadList.Create(WS_VISIBLE | WS_CHILD | LVS_REPORT, rectDummy, &m_tabsWnd, 4);
     m_wndThreadList.SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-    //m_wndWatchList.Create(WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS, rectDummy, &m_tabsWnd, 4);
-    //m_wndWatchList.SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 
     CString strTabName;
 
@@ -94,9 +92,6 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
     bNameValid = strTabName.LoadString(IDS_THREADS_TAB);
     ASSERT(bNameValid);
     m_tabsWnd.AddTab(&m_wndThreadList, strTabName, (UINT)0);
-    //bNameValid = strTabName.LoadString(IDS_WATCH_TAB);
-    //ASSERT(bNameValid);
-    //m_tabsWnd.AddTab(&m_wndWatchList, strTabName, (UINT)0),
 
     m_imageList.DeleteImageList();
 
@@ -122,7 +117,6 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
     
     m_wndGlobalVarList.SetImageList(&m_imageList, LVSIL_SMALL);
     m_wndThreadList.SetImageList(&m_imageList, LVSIL_SMALL);
-    //m_wndWatchList.SetImageList(&m_imageList, LVSIL_SMALL);
 
     uiBmpId = /*theApp.m_bHiColorIcons ? IDB_BREAKPOINTS : */IDB_BITMAP5;//IDB_BITMAP2;
     bmp.DeleteObject();
@@ -138,9 +132,6 @@ int CPropertiesWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     InitVarListHeader(m_wndGlobalVarList);
     m_wndThreadList.Init();
-    //InitVarListHeader(m_wndWatchList);
-    //m_wndWatchList.Load();
-    //m_wndWatchList.AddSimpleNode(CString(""), (LPARAM)0, CString());
     InitBreakpointListHeader();
     m_wndBreakpointList.Load();
 	return 0;
@@ -190,7 +181,7 @@ void CPropertiesWnd::TabHolder::Create(CMFCTabCtrl *pTabsWnd, CRect &rect, int i
     m_pStackListWnd->SendMessage(LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 
     CString strName = GetName();
-    m_pTabsWnd->AddTab(m_pSplitterWnd, strName);// , (UINT)2 + threadId);
+    m_pTabsWnd->AddTab(m_pSplitterWnd, strName);
 }
 
 CString CPropertiesWnd::TabHolder::GetName() {
@@ -208,7 +199,6 @@ void CPropertiesWnd::OnEndThread(ThreadId threadId) {
             m_tabsWnd.GetTabLabel(i, strLabel);
             if (strName == strLabel) {
                 it->second->m_pVarListWnd->ClearList();
-                //it->second->m_pVarListWnd->SetScope(0);
                 m_tabsWnd.LockWindowUpdate();
                 if (m_tabsWnd.GetActiveTab() == i) {
                     m_tabsWnd.SetActiveTab(i - 1);
@@ -273,9 +263,6 @@ void CPropertiesWnd::InitBreakpointListHeader() {
 }
 
 void CPropertiesWnd::ClearGlobalVarList() {
-    //m_wndStackList.DeleteAllItems();
-    //m_wndLocalVarList.ClearList();
-    //m_wndLocalVarList.SetScope(0);
     m_wndGlobalVarList.ClearList();
     m_wndGlobalVarList.SetScope(0, INVALID_STACK_FRAME_IDX);
 }
@@ -400,15 +387,9 @@ void CPropertiesWnd::DisableTab(BOOL disable, ThreadId threadId) {
             CString strLabel;
             m_tabsWnd.GetTabLabel(i, strLabel);
             if (strName == strLabel) {
-                //COLORREF color = -1;
-                //m_tabsWnd.SetTabTextColor(i, disable ? 0x004040ff : 0xffffffff);
                 m_tabsWnd.SetBkColor(i, disable);
                 it->second->m_pVarListWnd->SetTextColor(disable ? 0x004040ff : 0x00000000);
                 it->second->m_pStackListWnd->SetTextColor(disable ? 0x004040ff : 0x00000000);
-                //m_tabsWnd.SetTabTextColor(i, disable ? 0x0099ff99 : 0x00000000);
-                //m_tabsWnd.SetActiveTabColor(0x009999ff);
-                //m_tabsWnd.SetImageList(IDI_THREAD_RUNNING);
-                //m_tabsWnd.SetTabIcon(i, disable ? 0 : -1);
                 m_tabsWnd.GetTabWnd(i)->EnableWindow(!disable);
                 break;
             }
@@ -428,12 +409,7 @@ BOOL CTabs::SetActiveTab(int iTab) {
         CMFCTabCtrl::GetTabLabel(iTab, title);
         static_cast<CPropertiesWnd*>(GetParent())->SetWindowText(title);
         COLORREF c = GetTabBkColor(iTab);
-        //if (c == m_disbaledBkColor) {
-            SetActiveTabColor(c);
-        //}
-        //else {
-        //    SetActiveTabColor(m_defaultBkColor);
-        //}
+        SetActiveTabColor(c);
         InvalidateTab(iTab);
         return TRUE;
     }
@@ -474,15 +450,12 @@ void CPropertiesWnd::RestoreBreakpopints(_bstr_t &path, _bstr_t &fileName, unord
 void CPropertiesWnd::OnSetFocus(CWnd* pOldWnd)
 {
 	CDockablePane::OnSetFocus(pOldWnd);
-	//m_wndLocalVarsList.SetFocus();
-    //m_wndStackList.SetFocus();
     m_wndGlobalVarList.SetFocus();
 }
 
 void CPropertiesWnd::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
 	CDockablePane::OnSettingChange(uFlags, lpszSection);
-	//SetPropListFont();
 }
 
 /*****************************************/
@@ -558,11 +531,7 @@ void CVarList::LoadFooArgList(ThreadId threadId, ui32 frameIdx) {
             }
             typeName = pType->GetTypeString(pSymStore);
             vector<ItemDesc*>::iterator it = m_ItemDescVector.begin() + i;
-//#ifdef _DEBUG
             m_ItemDescVector.insert(it, new ItemDesc(string(), varName, typeName, threadId, frameIdx, i, pType));
-//#else // _DEBUG
-//            m_ItemDescVector.insert(it, new ItemDesc(varName, pMemoryBlockRef, pMemoryBlockRef->GetOffset(), pType));
-//#endif // _DEBUG
 
             switch (pType->GetType()) {
                 case TYPE_ARRAY:
@@ -606,11 +575,7 @@ void CVarList::LoadVarList(ThreadId threadId, ui32 frameIdx) {
                 typeName = pType->GetTypeString(pSymStore);
                 MemoryBlockRef *pMemoryBlockRef = pStackMemory->GetMemoryBlockRef(i | globalBit);
                 vector<ItemDesc*>::iterator itDesc = m_ItemDescVector.begin() + i;
-//#ifdef _DEBUG
                 m_ItemDescVector.insert(itDesc, new ItemDesc(string(), varName, typeName, threadId, frameIdx, i, pType));
-//#else // _DEUBG
-//                m_ItemDescVector.insert(itDesc, new ItemDesc(to_string(i), pMemoryBlockRef, pMemoryBlockRef->GetOffset(), pType));
-//#endif // _DEBUG
                 
                 switch (pType->GetType()) {
                     case TYPE_ARRAY:
@@ -789,7 +754,6 @@ void CVarList::ExpandArray(string &itemPath, LVITEM &lv, SymbolStore *pSymStore,
     string valueName, valueTypeName;
     valueTypeName = pValueType->GetTypeString(pSymStore);
 
-    //MemoryBlockRef *_pMemoryBlockRef = 0;
     string subscriptStr;
     for (ui32 i = 0; i < itemCount; ++i) {
 
@@ -806,14 +770,9 @@ void CVarList::ExpandArray(string &itemPath, LVITEM &lv, SymbolStore *pSymStore,
         }
         valueName = _bstr_t(lv.pszText);
         ctr.GetSubscriptString(subscriptStr);
-        valueName = valueName + subscriptStr;// "[" + to_string(i) + "]";
+        valueName = valueName + subscriptStr;
         vector<ItemDesc*>::iterator itDesc = m_ItemDescVector.begin() + lv.iItem + i + 1;
-//#ifdef _DEBUG
-        //MemoryBlockRef *pStackMemoryBlockRef = itemDesc.GetStackMemoryBlockRef(mem);
         m_ItemDescVector.insert(itDesc, new ItemDesc(subItemPath, valueName, valueTypeName, itemDesc.GetThreadId(), itemDesc.GetStackFrame(), itemDesc.GetVarIdx(), /*offset,*/ pValueType));
-//#else // _DEUBG
-//        m_ItemDescVector.insert(itDesc, new ItemDesc(subItemPath, pMemoryBlockRef, offset, pValueType));
-//#endif // _DEBUG
 
         offset += valueSize;
 
@@ -848,7 +807,6 @@ void CVarList::ExpandAggregate(string &itemPath, int row, int indent, SymbolStor
     UpdateImg(row, indent, IMG_EXPANDED);
     
     Memory *pMem = theApp.GetMemory();
-    //MemoryBlockRef  *_pMemoryBlockRef = 0;
     ui32 newRow = row;
     for (ui32 i = 0; i < subTypeCount; ++i) {
         Type *pSubType = pAggregateType->GetSubType(i);
@@ -860,7 +818,6 @@ void CVarList::ExpandAggregate(string &itemPath, int row, int indent, SymbolStor
             memberTypeName = pMemberType->GetTypeString(pSymStore);
             pSymStore->GetSymbolName(pVariable->GetSymbolId(), memberName);
             ui32 offset = pMemoryBlockRef->GetOffset() + pVariable->GetAlignedMemberOffset();
-            //ui32 offset = pVariable->GetAlignedMemberOffset();
             string subItemPath;
             if (itemPath.length()) {
                 subItemPath = itemPath + "_" + to_string(i) + "_" + to_string(k);
@@ -869,14 +826,8 @@ void CVarList::ExpandAggregate(string &itemPath, int row, int indent, SymbolStor
                 subItemPath = to_string(i) + "_" + to_string(k);
             }
 
-            //string subItemPath = itemPath + "_" + to_string(newRow - row);
             vector<ItemDesc*>::iterator itDesc = m_ItemDescVector.begin() + newRow + 1;
-//#ifdef _DEBUG
-            //MemoryBlockRef *pStackMemoryBlockRef = itemDesc.GetStackMemoryBlockRef(mem);
             m_ItemDescVector.insert(itDesc, new ItemDesc(subItemPath, memberName, memberTypeName, itemDesc.GetThreadId(), itemDesc.GetStackFrame(), itemDesc.GetVarIdx(), /*offset, */pMemberType));
-//#else // _DEUBG
-//            m_ItemDescVector.insert(itDesc, new ItemDesc(subItemPath, pMemoryBlockRef, offset, pMemberType));
-//#endif // _DEBUG
 
             IMAGE_TYPE imgType;
             switch (pSubType->GetType()) {
@@ -923,16 +874,9 @@ void CVarList::ExpandLib(string &itemPath, int row, SymbolStore *pSymStore, Item
             subItemPath = to_string(i) + "_0";
         }
 
-        //string subItemPath = itemPath + "_" + to_string(i);
         ui32 offset = pMemoryBlockRef->GetOffset() + pVariable->GetAlignedMemberOffset();
-        //ui32 offset = pVariable->GetAlignedMemberOffset();
         vector<ItemDesc*>::iterator itDesc = m_ItemDescVector.begin() + row + 1;
-//#ifdef _DEBUG
-        //MemoryBlockRef *pStackMemoryBlockRef = itemDesc.GetStackMemoryBlockRef(mem);
         m_ItemDescVector.insert(itDesc, new ItemDesc(subItemPath, name, typeName, itemDesc.GetThreadId(), itemDesc.GetStackFrame(), itemDesc.GetVarIdx(), /*offset, */pSubType));
-//#else // _DEBUG
-//        m_ItemDescVector.insert(itDesc, new ItemDesc(subItemPath, pMemoryBlockRef, offset, pSubType));
-//#endif // _DEBUG
         InsertTreeNode(row + i, 0, IMG_NONE, (LPARAM)row);
     }
     pMemoryBlockRef->Release();
@@ -975,9 +919,7 @@ void CVarList::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
         WCHAR buffer[50];
         lv.pszText = buffer;
         lv.cchTextMax = sizeof(buffer);
-        //lv.pszText = str;
         lv.mask = LVIF_TEXT | LVIF_INDENT | LVIF_IMAGE | LVIF_PARAM;
-        //lv.iIndent = indent;
         if (GetItem(&lv)) {
             LONG x0 = lv.iIndent * 16,
                  x1 = x0 + 16;
@@ -1089,8 +1031,8 @@ void CVarList::OnPopupCopy()
     CString name = GetItemText(i, 0),
         value = GetItemText(i, 1),
         type = GetItemText(i, 2),
-        address = GetItemText(i, 3);// +":\r\n";
-    string s;// = (LPCSTR)_bstr_t((LPCWSTR)address);
+        address = GetItemText(i, 3);
+    string s;
     if (type == "string") {
         s += UnEscapeString(string((LPCSTR)_bstr_t((LPCWSTR)value)));
     }
@@ -1160,51 +1102,47 @@ string CVarList::EscapeString(string &token) {
 
 string CVarList::UnEscapeString(string &token) {
     string s;
-    char ch;// = token[0];
-    //if ((ch == '\"') || (ch == '\'')) {
-        //s.push_back(ch);
+    char ch;
     size_t len = token.size() - 1;
-        for (ui32 i = 1; i < len; ++i) {
-            if (token[i] == '\\') {
-                ++i;
-                switch (token[i]) {
-                    case 'a':
-                        ch = 0x07;
-                        break;
-                    case 'b':
-                        ch = 0x08;
-                        break;
-                    case 'f':
-                        ch = 0x0c;
-                        break;
-                    case 'n':
-                        ch = 0x0a;
-                        break;
-                    case 'r':
-                        ch = 0x0d;
-                        break;
-                    case 't':
-                        ch = 0x09;
-                        break;
-                    case 'v':
-                        ch = 0x0b;
-                        break;
-                    case '\\':
-                    case '\'':
-                    case '\"':
-                        ch = token[i];
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else {
-                ch = token[i];
-            }
-            s.push_back(ch);
-        }
-        //token = s;
-    //}
+	for (ui32 i = 1; i < len; ++i) {
+		if (token[i] == '\\') {
+			++i;
+			switch (token[i]) {
+			case 'a':
+				ch = 0x07;
+				break;
+			case 'b':
+				ch = 0x08;
+				break;
+			case 'f':
+				ch = 0x0c;
+				break;
+			case 'n':
+				ch = 0x0a;
+				break;
+			case 'r':
+				ch = 0x0d;
+				break;
+			case 't':
+				ch = 0x09;
+				break;
+			case 'v':
+				ch = 0x0b;
+				break;
+			case '\\':
+			case '\'':
+			case '\"':
+				ch = token[i];
+				break;
+			default:
+				break;
+			}
+		}
+		else {
+			ch = token[i];
+		}
+		s.push_back(ch);
+	}
     return s;
 }
 
@@ -1239,7 +1177,7 @@ void CVarList::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
                             Type *pType = pMemoryBlockRef->GetReferenceTypeNode();
                             locked = pMemoryBlockRef->GetMemoryBlock()->IsLocked();
                             string strAddr;
-                            //CPropertiesWnd *pPropWnd = static_cast<CPropertiesWnd*>(GetParent()->GetParent());
+
                             if (m_pPropWnd->GetViewAddress()) {
                                 Value addr;
                                 addr.Set((ui32)pMemoryBlockRef->GetMemoryBlock()->GetPtr<void*>(pMemoryBlockRef->GetOffset()));
@@ -1259,9 +1197,6 @@ void CVarList::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
                                     if (!val.GetHexString(str)) {
                                         str = "<...>";
                                     }
-                                    //std::stringstream sstream;
-                                    //sstream << "0x" << std::hex << val.GetUI32();
-                                    //str = sstream.str();
                                     break;
                                 }
                                 case TYPE_STRING: {
@@ -1367,12 +1302,8 @@ CVarList::ItemDesc& CVarList::ItemDesc::operator=(const CVarList::ItemDesc& that
     m_varIdx                = that.m_varIdx;
     m_itemPath              = that.m_itemPath;
     m_address               = that.m_address;
-//#ifdef _DEBUG
-//#endif // _DEBUG
     return *this;
 }
-
-//#ifdef _DEBUG
 
 CVarList::ItemDesc::ItemDesc(string& itemPath, string &name, string &type, ThreadId threadId, ui32 stackFrame, ui32 varIdx, Type* pItemType) :
     m_pItemType(pItemType),
@@ -1475,18 +1406,13 @@ void CThreadList::Add(ThreadId threadId) {
     lv.iImage = 2;
     lv.mask |= LVIF_IMAGE;
 
-    //if (col == 0) {
     lv.lParam = (LPARAM)threadId;
     InsertItem(&lv);
-    //}
-    //else {
-    //    SetItem(&lv);
-    //}
 }
 
 void CThreadList::Remove(ThreadId threadId) {
     int count = GetItemCount();
-    //CString strThreadId = _bstr_t(_variant_t(threadId));
+
     for (int i = 0; i < count; ++i) {
         if (GetItemData(i) == threadId) {
             DeleteItem(i);
@@ -1508,7 +1434,6 @@ void CThreadList::SetBlocked(ThreadId threadId, bool blocked) {
             if (blocked) {
                 TODO("Refactor it!");
                 if (Memory *pMemory = theApp.GetMemory()) {
-                    //SymbolStore *pSymbolStore = theApp.GetSymbolStore();
                     StackMemory *pStackMemory = pMemory->GetThreadMemory(threadId);
                     ui32 frameIdx = pStackMemory->GetFrameIdx();
                     string fooType, location, fileName;
@@ -1558,24 +1483,6 @@ void CThreadList::SetSymbol(ThreadId threadId, _bstr_t location, _bstr_t line, _
     SetActive(threadId);
 }
 
-//void CThreadList::AddData(int row, int col, LPWSTR str, ui32 stackIdx) {
-//
-//    LVITEM lv;
-//    lv.iItem = row;
-//    lv.iSubItem = col;
-//    lv.pszText = str;
-//    lv.mask = LVIF_TEXT;
-//    if (col == 0) {
-//        lv.mask |= LVIF_PARAM;
-//        lv.lParam = (LPARAM)stackIdx;
-//        InsertItem(&lv);
-//    }
-//    else {
-//        SetItem(&lv);
-//    }
-//
-//}
-
 void CThreadList::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
 {
     NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
@@ -1599,15 +1506,6 @@ void CThreadList::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
     *pResult = 0;
 }
 
-//ui32 CStackList::GetThreadId() {
-//    CMFCTabCtrl *pTabs = (CMFCTabCtrl*)GetParent()->GetParent()->GetParent();
-//    CString label;
-//    pTabs->GetTabLabel(pTabs->GetActiveTab(), label);
-//    label.Replace(L"Thread: ", L"");
-//    string str = _bstr_t(label);
-//    return stoi(str);
-//}
-//
 void CThreadList::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult) {
     LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
     if (pNMItemActivate->iItem == -1) return;
@@ -1670,7 +1568,6 @@ void CStackList::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult) {
     if (pNMItemActivate->iItem == -1) return;
 
     // TODO: Add your control notification handler code here
-    //ui32 stackIdx = (ui32)GetItemData(pNMItemActivate->iItem);
     LVITEM lv = { 0 };
     lv.iItem = pNMItemActivate->iItem;
     lv.iSubItem = 2;
@@ -2182,176 +2079,6 @@ void CPropertiesWnd::OnDestroy() {
 }
 
 /***********************************************************/
-//
-//BEGIN_MESSAGE_MAP(CWatchList, CVarList)
-//    ON_NOTIFY_REFLECT(NM_DBLCLK, &CWatchList::OnNMDblclk)
-//    ON_NOTIFY_REFLECT(LVN_GETDISPINFO, &CWatchList::OnLvnGetdispinfo)
-//    ON_NOTIFY_REFLECT(LVN_SETDISPINFO, &CWatchList::OnLvnSetdispinfo)
-//    ON_NOTIFY_REFLECT(LVN_ENDLABELEDIT, &CWatchList::OnLvnEndlabeledit)
-//END_MESSAGE_MAP()
-//
-//
-//void CWatchList::Load() {
-//    HRESULT hr = S_OK;
-//    CComPtr<IXMLDOMDocument> xmlDoc = theApp.GetDebuggerData();
-//    CComPtr<IXMLDOMNodeList> spWatchList;
-//    hr = xmlDoc->selectNodes(_bstr_t("//root/watch/name"), &spWatchList);
-//    if (FAILED(hr)) return;
-//
-//    long count = 0;
-//    spWatchList->get_length(&count);
-//    for (long i = 0; i < count; ++i) {
-//        _bstr_t name;
-//        CComPtr<IXMLDOMNode> spNameNode;
-//        hr = spWatchList->get_item(i, &spNameNode);
-//        if (!spNameNode) continue;
-//
-//        hr = spNameNode->get_text(&name.GetBSTR());
-//
-//        AddSimpleNode(CString((LPWSTR)name), 0, CString());
-//    }
-//}
-//
-//void CWatchList::Save() {
-//    if (!UpdateDebuggerData()) return;
-//
-//    theApp.SaveDebuggerData();
-//}
-//
-//bool CWatchList::UpdateDebuggerData() {
-//    CComPtr<IXMLDOMDocument> xmlDoc = theApp.GetDebuggerData();
-//    CComPtr<IXMLDOMNode>     spWatch;
-//    HRESULT hr = xmlDoc->selectSingleNode(_bstr_t("//root/watch"), &spWatch);
-//    if (!spWatch) return false;
-//
-//    int count = GetItemCount();
-//    for (int i = 0; i < count; ++i) {
-//        CString strName = GetItemText(i, 0);
-//        CComPtr<IXMLDOMElement> spName;
-//        hr = xmlDoc->createElement(_bstr_t("name"), &spName);
-//        if (!spName) continue;
-//        
-//        hr = spName->put_text(_bstr_t(strName));
-//        if (FAILED(hr)) continue;
-//
-//        hr = spWatch->appendChild(spName, 0);
-//    }
-//    return true;
-//}
-//
-//void CWatchList::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//    LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-//
-//    int idx = pNMItemActivate->iItem;
-//    if (idx == -1) {
-//        idx = GetItemCount();
-//        RECT rect;
-//        GetItemRect(idx - 1, &rect, LVIR_BOUNDS);
-//        if (!((rect.bottom < pNMItemActivate->ptAction.y) && (pNMItemActivate->ptAction.y < (2 * rect.bottom - rect.top)))) {
-//            *pResult = 0;
-//            return;
-//        }
-//        CString str = GetItemText(idx - 1, 0);
-//        if (str.GetLength()) {
-//            AddSimpleNode(CString(""), (LPARAM)0, CString());
-//        }
-//        else {
-//            --idx;
-//            GetItemRect(idx, &rect, LVIR_BOUNDS);
-//            if (!((rect.bottom < pNMItemActivate->ptAction.y) && (pNMItemActivate->ptAction.y < rect.top))) {
-//                *pResult = 0;
-//                return;
-//            }
-//        }
-//    }
-//    EditLabel(idx);
-//    SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-//    *pResult = 0;
-//}
-//
-//
-//void CWatchList::OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//    NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-//    // TODO: Add your control notification handler code here
-//    *pResult = 0;
-//}
-//
-//
-//void CWatchList::OnLvnSetdispinfo(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//    NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-//    // TODO: Add your control notification handler code here
-//    *pResult = 0;
-//}
-//
-//
-//void CWatchList::OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult)
-//{
-//    NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
-//    if (!pDispInfo->item.pszText || (0 == *pDispInfo->item.pszText)) {
-//        if (GetItemCount() > 1) {
-//            DeleteItem(pDispInfo->item.iItem);
-//        }
-//    }
-//    else {
-//        SetItem(&pDispInfo->item);
-//    }
-//    *pResult = 0;
-//}
-//
-//void CWatchList::GetAllVariables(unordered_map<string, ui32> &vars) {
-//    int count = GetItemCount() - 1;
-//    for (int i = 0; i < count; ++i) {
-//        CString strName = GetItemText(i, 0);
-//        vars.insert(pair<string, ui32>(string(_bstr_t(strName)), i));
-//    }
-//}
-//
-//void CWatchList::LoadWatchList() {
-//    Memory *pMemory = theApp.GetMemory();
-//    vector<ThreadId> threadIds;
-//    unordered_map<string, ui32> vars;
-//    GetAllVariables(vars);
-//    pMemory->GetThreadIds(threadIds);
-//    for (vector<ThreadId>::iterator it = threadIds.begin(); it != threadIds.end(); ++it) {
-//        StackMemory *pStackMemory = pMemory->GetThreadMemory(*it);
-//        ui32 topFrameIdx = pStackMemory->GetFrameIndex();
-//        if (topFrameIdx || pStackMemory->IsMainThread()) {
-//            ui32 globalBit = (topFrameIdx == 0) ? MEMORY_BLOCK_BIT_GLOBAL : 0;
-//            if (SymbolStore *pSymStore = theApp.GetSymbolStore()) {
-//                vector<LOCAL_VAR_DESCRIPTOR> &locaVarDesc = m_pScope->GetLocalVarDescriptors();
-//                int i = 0;
-//                //_bstr_t itemPath;
-//                for (vector<LOCAL_VAR_DESCRIPTOR>::iterator it = locaVarDesc.begin(); it != locaVarDesc.end(); ++it, ++i) {
-//                    string varName, typeName;
-//                    pSymStore->GetSymbolName(it->m_desc.m_symId, varName);
-//                    unordered_map<string, ui32>::iterator res = vars.find(varName);
-//                    if (!(res != vars.end())) continue;
-//
-//                    Type *pType = (*it);
-//                    typeName = CPropertiesWnd::GetTypeString(pSymStore, pType);
-//                    MemoryBlockRef *pMemoryBlockRef = pStackMemory->GetMemoryBlockRef(i | globalBit);
-//                    pair<unordered_map<string, ItemDesc>::iterator, bool> item = m_varItems.insert(pair<string, ItemDesc>(to_string(i), ItemDesc(pMemoryBlockRef->GetMemoryBlock(), pMemoryBlockRef->GetOffset(), pType, false)));
-//
-//                    switch (pType->GetType()) {
-//                        case TYPE_ARRAY:
-//                        case TYPE_AGGREGATE_TYPE:
-//                        case TYPE_LIB:
-//                        case TYPE_ERROR_TYPE:
-//                            AddTreeNode(CString(varName.c_str()), (LPARAM)&item.first->first, CString(typeName.c_str()));
-//                            break;
-//                        default:
-//                            AddSimpleNode(CString(varName.c_str()), (LPARAM)&item.first->first, CString(typeName.c_str()));
-//                            break;
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-
 
 void CBreakpointList::OnContextMenu(CWnd* pWnd, CPoint point)
 {
@@ -2383,33 +2110,3 @@ void CBreakpointList::OnDeleteBreakpoint()
             line = GetItemText(i, 0);
     DeleteBreakpoint(_bstr_t(path), _bstr_t(script), _bstr_t(line));
 }
-
-
-//void CStackList::OnSize(UINT nType, int cx, int cy)
-//{
-//    CListCtrl::OnSize(nType, cx - 10, cy - 10);
-//    //SetWindowPos(0, 0, 0, cx - 20, cy - 20, nType);
-//    // TODO: Add your message handler code here
-//}
-//BEGIN_MESSAGE_MAP(CTabs, CMFCTabCtrl)
-//    ON_WM_SETFOCUS()
-//    ON_REGISTERED_MESSAGE(AFX_WM_CHANGE_ACTIVE_TAB, OnTabSetActive)
-//END_MESSAGE_MAP()
-//
-//
-//void CTabs::OnSetFocus(CWnd* pOldWnd)
-//{
-//    CMFCTabCtrl::OnSetFocus(pOldWnd);
-//
-//    // TODO: Add your message handler code here
-//}
-//LRESULT CTabs::OnTabSetActive(WPARAM wParam, LPARAM lParam)
-//{
-//    const int iActiveTab = (int)wParam;
-//    CString title;
-//    CMFCTabCtrl::GetTabLabel(iActiveTab, title);
-//    static_cast<CPropertiesWnd*>(GetParent())->SetWindowText(title);
-//    //int iCheckActiveTab = CMFCTabCtrl::GetActiveTab(); //CMFCTabCtrl m_wndTabs;
-//    //CMFCTabCtrl::SetActiveTab(iActiveTab); //good idea to also add this depending on usage.
-//    return 0;
-//}

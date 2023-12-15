@@ -16,10 +16,6 @@ static char THIS_FILE[]=__FILE__;
 
 CFileView::CFileView()
 {
-    /*m_FileFind.FindFile();
-    m_FileFind.FindNextFileW();
-    m_CurrentDir = m_FileFind.GetRoot();*/
-    
 }
 
 CFileView::~CFileView()
@@ -99,87 +95,6 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 
 void CFileView::FillFileView()
 {
-    /*WIN32_FIND_DATA ffd;
-    HANDLE hFind = INVALID_HANDLE_VALUE;*/
-
-	/*HTREEITEM hRoot = m_wndFileView.InsertItem(_T("<...>"), 0, 0);
-	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);*/
-
-    //m_FileFind.FindNextFileW();
-    
-    /*HTREEITEM hSrc = m_wndFileView.InsertItem(m_CurrentDir, 0, 0);
-    
-    while (m_FileFind.FindNextFileW()) {
-        if (m_FileFind.IsDirectory()) {
-            if (m_FileFind.GetFileName() != ".") {
-                m_wndFileView.InsertItem(m_FileFind.GetFileName(), 0, 0, hSrc);
-            }
-        }
-        else {
-            m_wndFileView.InsertItem(m_FileFind.GetFileName(), 1, 1, hSrc);
-        }
-    };*/
-
- //   hFind = FindFirstFile(m_CurrentDir, &ffd);
- //   if (INVALID_HANDLE_VALUE == hFind)
- //   {
- //       //DisplayErrorBox(TEXT("FindFirstFile"));
- //       return;
- //   }
-
- //   // List all the files in the directory with some info about them.
-
- //   do
- //   {
- //       if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
- //       {
- //          // _tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
- //       }
- //       else
- //       {
- //           //filesize.LowPart = ffd.nFileSizeLow;
- //           //filesize.HighPart = ffd.nFileSizeHigh;
- //           //_tprintf(TEXT("  %s   %ld bytes\n"), ffd.cFileName, filesize.QuadPart);
- //       }
- //   } while (FindNextFile(hFind, &ffd) != 0);
-
- //   //dwError = GetLastError();
- //   //if (dwError != ERROR_NO_MORE_FILES)
- //   //{
- //   //    //DisplayErrorBox(TEXT("FindFirstFile"));
- //   //}
-
- //   FindClose(hFind);
-
-
-	////HTREEITEM hSrc = m_wndFileView.InsertItem(_T("FakeApp Source Files"), 0, 0, hRoot);
-
-	//m_wndFileView.InsertItem(_T("FakeApp.cpp"), 1, 1, hSrc);
-	//m_wndFileView.InsertItem(_T("FakeApp.rc"), 1, 1, hSrc);
-	//m_wndFileView.InsertItem(_T("FakeAppDoc.cpp"), 1, 1, hSrc);
-	//m_wndFileView.InsertItem(_T("FakeAppView.cpp"), 1, 1, hSrc);
-	//m_wndFileView.InsertItem(_T("MainFrm.cpp"), 1, 1, hSrc);
-	//m_wndFileView.InsertItem(_T("StdAfx.cpp"), 1, 1, hSrc);
-
-	//HTREEITEM hInc = m_wndFileView.InsertItem(_T("FakeApp Header Files"), 0, 0, hRoot);
-
-	//m_wndFileView.InsertItem(_T("FakeApp.h"), 2, 2, hInc);
-	//m_wndFileView.InsertItem(_T("FakeAppDoc.h"), 2, 2, hInc);
-	//m_wndFileView.InsertItem(_T("FakeAppView.h"), 2, 2, hInc);
-	//m_wndFileView.InsertItem(_T("Resource.h"), 2, 2, hInc);
-	//m_wndFileView.InsertItem(_T("MainFrm.h"), 2, 2, hInc);
-	//m_wndFileView.InsertItem(_T("StdAfx.h"), 2, 2, hInc);
-
-	//HTREEITEM hRes = m_wndFileView.InsertItem(_T("FakeApp Resource Files"), 0, 0, hRoot);
-
-	//m_wndFileView.InsertItem(_T("FakeApp.ico"), 2, 2, hRes);
-	//m_wndFileView.InsertItem(_T("FakeApp.rc2"), 2, 2, hRes);
-	//m_wndFileView.InsertItem(_T("FakeAppDoc.ico"), 2, 2, hRes);
-	//m_wndFileView.InsertItem(_T("FakeToolbar.bmp"), 2, 2, hRes);
-
-	//m_wndFileView.Expand(hRoot, TVE_EXPAND);
-	//m_wndFileView.Expand(hSrc, TVE_EXPAND);
-	//m_wndFileView.Expand(hInc, TVE_EXPAND);
 }
 
 void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -319,33 +234,10 @@ void CFileView::OnLButtonDblClk(UINT nFlags, CPoint point)
 
     CDockablePane::OnLButtonDblClk(nFlags, point);
 }
-//BEGIN_MESSAGE_MAP(CFileViewToolBar, CMFCToolBar)
-//    //ON_COMMAND(ID_CLEAR_STARTUP_SCRIPT, &CFileViewToolBar::OnClearStartupScript)
-//    //ON_COMMAND(ID_SET_STARTUP_SCRIPT, &CFileViewToolBar::OnSetStartupScript)
-//END_MESSAGE_MAP()
-//
-//
-//void CFileViewToolBar::OnClearStartupScript() {
-//    // TODO: Add your command handler code here
-//}
-//
-//
-//void CFileViewToolBar::OnSetStartupScript() {
-//    // TODO: Add your command handler code here
-//}
-
 
 BOOL CFileView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo) {
     // TODO: Add your specialized code here and/or call the base class
     bool enabled = m_wndFileTree.IsEnabledMenuItem(nID);
-    /*switch (nID) {
-        case ID_CLEAR_STARTUP_SCRIPT:
-            enabled = m_wndFileView.m_StartUpScript.GetLength() != 0;
-            break;
-        case ID_SET_STARTUP_SCRIPT:
-            enabled = m_wndFileView.m_StartUpScript.GetLength() == 0;
-            break;
-    }*/
     return enabled ? CDockablePane::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo) : 0;
 }
 

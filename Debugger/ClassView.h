@@ -31,24 +31,7 @@ protected:
     DECLARE_MESSAGE_MAP()
 public:
     afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-private:
-//    void LoadTree();
-//    EXTENTION_TYPE GetExtentionType(CString &fileName);
-//    BOOL GetCurrentFile(CString &filePath);
-    //CString     m_CurrentDir;
-    //CFileFind   m_FileFind;
-public:
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-    //afx_msg void OnSetStartupScript();
-  //  void OnClearStartupScript();
-   // bool IsEnabledMenuItem(DWORD nID);
-   // void ReloadTree();
-    //void OpenFile();
-    //virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
-    //CString     m_StartUpScriptDir, m_StartUpScript;
-    //afx_msg void OnCompile();
-    //afx_msg void OnDecompile();
-   // afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 };
 
@@ -65,7 +48,7 @@ public:
     void ClearClassView() { m_wndClassView.DeleteAllItems(); }
 protected:
 	CClassToolBar m_wndToolBar;
-	/*CFileTree*/CFunctionDefTree m_wndClassView;
+	CFunctionDefTree m_wndClassView;
 	CImageList m_ClassViewImages;
 	UINT m_nCurrSort;
 

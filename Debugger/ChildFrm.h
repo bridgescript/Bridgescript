@@ -24,10 +24,6 @@ protected:
     CImageList      m_imageBpList;
     CBrush          m_brushBkg;
     CPoint			m_bp;
-    //CD2DBitmap	   *m_pBP_enabled,
-    //    *m_pBP_disabled;
-    //CD2DBitmapBrush *m_pBrush;
-    //CD2DBrush* m_pB;
     typedef struct BREAKPOINT {
         int m_y;
         BREAKPOINT_MARKER m_marker;
@@ -42,7 +38,6 @@ protected:
 
 // Operations
 public:
-    //void HandleVScroll(UINT nPos);
     void Invalidate();
     void SetBreakpointMarker(int line, BREAKPOINT_MARKER marker);
     void SetHighlight(int line, HIGHLIGHT_TYPE type);
@@ -59,13 +54,10 @@ public:
 
 // Generated message map functions
 protected:
-    //CButton                     m_editCheckBox;
-
 
 	DECLARE_MESSAGE_MAP()
 #ifdef RICH_EDIT
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-    //afx_msg LRESULT OnAfxDraw2D(WPARAM wParam, LPARAM lParam);
     afx_msg void OnPaint();
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 #endif // RICH_EDIT

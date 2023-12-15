@@ -47,7 +47,6 @@ protected:
 public:
     afx_msg void OnLbnDblclk();
     afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-//    virtual void DeleteItem(LPDELETEITEMSTRUCT lpDeleteItemStruct);
     virtual void DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/);
 };
 
@@ -93,8 +92,6 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP()
-public:
-    //afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 protected:
     afx_msg LRESULT OnOnScriptRuntimeError(WPARAM wParam, LPARAM lParam);
 };

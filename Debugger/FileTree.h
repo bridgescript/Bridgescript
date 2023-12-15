@@ -29,8 +29,6 @@ private:
     void LoadTree();
     EXTENTION_TYPE GetExtentionType(CString &fileName);
     BOOL GetCurrentFile(CString &filePath);
-    //CString     m_CurrentDir;
-    //CFileFind   m_FileFind;
 public:
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnSetStartupScript();
@@ -38,7 +36,6 @@ public:
     bool IsEnabledMenuItem(DWORD nID);
     void ReloadTree();
     void OpenFile();
-    //virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
     CString     m_StartUpScriptDir, m_StartUpScript;
     afx_msg void OnCompile();
     afx_msg void OnDecompile();

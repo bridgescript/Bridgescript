@@ -173,7 +173,7 @@ void CFileTree::OnSetStartupScript() {
     GetItemImage(hItem, nImage, nSelectedImage);
     if (nImage != 0) { // file
         TVITEMW tvi;
-        hItem = GetChildItem(GetRootItem());// GetNextItem(TVI_ROOT, TVGN_CHILD);
+        hItem = GetChildItem(GetRootItem());
         while (hItem) {
             CString itemText = GetItemText(hItem);
             if (itemText == m_StartUpScript) {
@@ -184,7 +184,7 @@ void CFileTree::OnSetStartupScript() {
                 SetItem(&tvi);
                 break;
             }
-            hItem = GetNextSiblingItem(hItem);// GetNextItem(hItem, TVGN_NEXT);
+            hItem = GetNextSiblingItem(hItem);
         }
         tvi.mask = TVIF_STATE | TVIF_HANDLE;
         tvi.hItem = GetSelectedItem();
@@ -270,20 +270,6 @@ bool CFileTree::IsEnabledMenuItem(DWORD nID) {
     }
     return false;
 }
-//BOOL CFileTree::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
-//{
-//    // TODO: Add your specialized code here and/or call the base class
-//    bool enabled = true;
-//    switch (nID) {
-//        case ID_CLEAR_STARTUP_SCRIPT:
-//            enabled = false;
-//            break;
-//        case ID_SET_STARTUP_SCRIPT:
-//            enabled = true;
-//            break;
-//    }
-//    return enabled ? CTreeCtrl::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo) : 0;
-//}
 
 BOOL CFileTree::GetCurrentFile(CString &filePath) {
     if (HTREEITEM hItem = GetSelectedItem()) {

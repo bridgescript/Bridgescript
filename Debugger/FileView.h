@@ -12,9 +12,6 @@ class CFileViewToolBar : public CMFCToolBar
 
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 public:
-    /*DECLARE_MESSAGE_MAP()
-    afx_msg void OnClearStartupScript();
-    afx_msg void OnSetStartupScript();*/
 };
 
 class CFileView : public CDockablePane

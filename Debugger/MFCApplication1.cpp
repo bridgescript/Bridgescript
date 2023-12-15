@@ -556,7 +556,6 @@ void CMFCApplication1App::LoadDebuggerData() {
         m_xmlDebuggerData->put_preserveWhiteSpace(VARIANT_TRUE);
 
         m_xmlDebuggerData->put_async(VARIANT_FALSE);
-        //m_xmlDoc->put_setProperty(_bstr_t("SelectionLanguage"), _bstr_t("XPath"));
 
         VARIANT_BOOL res;
         hr = m_xmlDebuggerData->load(docPath, &res);
