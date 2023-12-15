@@ -138,7 +138,7 @@ protected:
     afx_msg LRESULT OnDebuggerBreakHit(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnSetStartupScript(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnClearStartupScript(WPARAM wParam, LPARAM lParam);
-    afx_msg LRESULT OnScriptCompileError(WPARAM wParam, LPARAM lParam);
+    //afx_msg LRESULT OnScriptCompileError(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnBeginThread(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnEndThread(WPARAM wParam, LPARAM lParam);
     afx_msg LRESULT OnEndScriptThread(WPARAM wParam, LPARAM lParam);

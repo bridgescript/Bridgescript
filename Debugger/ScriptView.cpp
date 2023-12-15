@@ -234,7 +234,7 @@ BOOL CScriptView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
 //    return true;
 //}
 
-void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, ThreadId threadId, Scope *pScope) {
+void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, ThreadId threadId, Scope *pScope, ui32 pos) {
 #ifdef RICH_EDIT
     m_currentLine = line;
     CChildFrame *pFrame =(CChildFrame*) GetParentFrame();
@@ -246,17 +246,9 @@ void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, Thr
     int vl = scrollPos / pFrame->GetImgSizeY() + ((scrollPos % pFrame->GetImgSizeY() != 0) ? 1 : 0);
     RECT r;
     ctl.GetClientRect(&r);
-    //ctl.GetWindowRect(&wr);
-    //ctl.GetRect(&rr);
-    //ui32 vl = ctl.GetFirstVisibleLine();
-    if ((line < vl) || (line >= (r.bottom / pFrame->GetImgSizeY() + vl))) { // scroll
 
-    //if (curPos > line) {
-      //  line = -(curPos - line);
-    //}
-    //else {
+    if ((line < vl) || (line >= (r.bottom / pFrame->GetImgSizeY() + vl))) { // scroll
         i32 newLine = line - vl;
-        //} // cur:3 line:10 -> 10-3 = 7 , -(3 - 10)
         int totalLines = ctl.GetLineCount();
         int maxscrollLine = totalLines - (r.bottom / pFrame->GetImgSizeY()) - 1;
         if (maxscrollLine < line) {
@@ -265,20 +257,41 @@ void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, Thr
         else {
         }
         ctl.LineScroll(newLine, 0);
-        //ScrollWindow(0, newLine * 15 + scrollPos % 15);
-        //UpdateWindow();
         pFrame->SetHighlight(line, type);
         int newscrollPos = GetScrollPos(SB_VERT);
         pFrame->SetPos(newscrollPos);
     }
     else {
-        //this->SelectLine()
-        //SetScrollPos(SB_VERT, line * 15);
-        //RECT r;
-        //GetClientRect(&r);
-        //InvalidateRect(&r);
         pFrame->SetHighlight(line, type);
     }
+
+	if (HIGHLIGHT_COMPILE_ERROR == type) {
+		CChildFrame* pFrame = (CChildFrame*)GetParentFrame();
+		int scrollPos = GetScrollPos(SB_VERT); // get scroll position
+
+		CPoint cp = ctl.GetCaretPos(); // for debugging only
+
+		cp.x = 0;
+		cp.y = (line * pFrame->GetImgSizeY()) - scrollPos + IMG_Y_OFFSET; // set Y offset
+
+		int idx = ctl.CharFromPos(cp); // get character index at Point
+		
+		// get word triggered this error
+		int nLineLength = ctl.LineLength(ctl.LineIndex(line)) + 1;
+		CString strText;
+		ctl.GetLine(line, strText.GetBufferSetLength(nLineLength), nLineLength);
+		CString word;
+		for (int i = pos; i < strText.GetLength(); ++i) {
+			if (!isalnum(strText[i])) {
+				break;
+			}
+			word.AppendChar(strText[i]);
+		}
+
+		ctl.SetSel(idx + pos, idx + pos + word.GetLength()); // select the word
+
+		ctl.SetModify(FALSE);
+	}
 
     pFrame->Invalidate();
    
@@ -1368,6 +1381,15 @@ void CScriptView::ParseText() {
     ctl.GetSelectionCharFormat(cfm);
     cfm.cbSize = sizeof(cfm);
 	bool bLongComment = false;
+	auto SetTextGrayFn = [&cfm, &ctl](long Start, long End)
+	{
+		const COLORREF rgbGray = 0x00909090;
+		ctl.SetSel(Start, End);
+		cfm.crTextColor = rgbGray;
+		cfm.dwMask = CFM_ITALIC | CFM_COLOR;
+		cfm.dwEffects = CFE_ITALIC;
+		ctl.SetSelectionCharFormat(cfm);
+	};
     // Dump every line of text of the rich edit control.
     for (int k = 0; k < nLineCount; k++)
     {
@@ -1408,13 +1430,7 @@ void CScriptView::ParseText() {
 
 				if ((ch == _T('/')) && (i + 1 <= nLineLength) && (strText[i + 1] == _T('/'))) // comment out rest of the lilne
 				{
-					const COLORREF rgbGray = 0x00909090;
-					//KeyWordData pkw(rgbGray);
-					ctl.SetSel(pos + i, pos + nLineLength);
-					cfm.crTextColor = rgbGray;
-					cfm.dwMask = CFM_ITALIC | CFM_COLOR;// | CFM_BOLD;
-					cfm.dwEffects = CFE_ITALIC;//CFE_BOLD | CFE_AUTOCOLOR;
-					ctl.SetSelectionCharFormat(cfm);
+					SetTextGrayFn(pos + i, pos + nLineLength);
 					break;
 				}
 
@@ -1430,23 +1446,12 @@ void CScriptView::ParseText() {
 					bLongComment = false;
 					str.AppendChar(ch);
 					str.AppendChar(strText[i + 1]);
-					const COLORREF rgbGray = 0x00909090;
-					ctl.SetSel(pos + LongCommentBeginPos, pos + i + 2);
-					cfm.crTextColor = rgbGray;
-					cfm.dwMask = CFM_ITALIC | CFM_COLOR;// | CFM_BOLD;
-					cfm.dwEffects = CFE_ITALIC;//CFE_BOLD | CFE_AUTOCOLOR;
-					ctl.SetSelectionCharFormat(cfm);
+					SetTextGrayFn(pos + LongCommentBeginPos, pos + i + 2);
 				}
 				else {
 					str.AppendChar(ch);
 					if (i == nLineLength) {
-						const COLORREF rgbGray = 0x00909090;
-						//KeyWordData pkw(rgbGray);
-						ctl.SetSel(pos + LongCommentBeginPos, pos + nLineLength);
-						cfm.crTextColor = rgbGray;
-						cfm.dwMask = CFM_ITALIC | CFM_COLOR;// | CFM_BOLD;
-						cfm.dwEffects = CFE_ITALIC;//CFE_BOLD | CFE_AUTOCOLOR;
-						ctl.SetSelectionCharFormat(cfm);
+						SetTextGrayFn(pos + LongCommentBeginPos, pos + nLineLength);
 					}
 				}
 			}
@@ -1459,55 +1464,8 @@ void CScriptView::ParseText() {
 
     ctl.SetModify(FALSE);
 
-    //long start, end;
-    //ctl.GetSel(start, end);
-    //int len = ctl.SendMessage(EM_LINELENGTH, start);
-    //if (len == 0) return;
-
-    //CHARFORMAT cfm;
-    //ctl.GetSelectionCharFormat(cfm);
-    //cfm.cbSize = sizeof(cfm);
-    //cfm.crTextColor = 0;
-    //
-    //ctl.SetSel(0, len + 1);
-    //cfm.dwMask = CFM_COLOR;// | CFM_BOLD;
-    //cfm.dwEffects = 0;//CFE_BOLD | CFE_AUTOCOLOR;
-    //ctl.SetSelectionCharFormat(cfm);
-    //cfm.dwMask = CFM_BOLD;
-    //cfm.dwEffects = 0;
-    //ctl.SetSelectionCharFormat(cfm);
-
-
-    //int curLine = ctl.LineFromChar(start);
-    //LPTSTR pBuf = new TCHAR[len + 1];
-    //ctl.GetLine(curLine, pBuf);
-    //CString str;
-    //for (int i = 0; i <= len; ++i) {
-    //	TCHAR ch = pBuf[i];
-    //	if (isalnum(ch)) {
-    //		str.AppendChar(ch);
-    //	}
-    //	else {
-    //		if (str.GetLength()) {
-    //               KeyWordData* pkw = 0;
-    //               if (m_keywords.Lookup(str, (void*&)pkw)) {
-    //                   //return pkw;
-    //				long b = i - str.GetLength() + start, e = i + start;
-    //				ctl.SetSel(b, e);
-    //				cfm.crTextColor = pkw->color;
-    //				cfm.dwMask = CFM_COLOR;// | CFM_BOLD;
-    //				cfm.dwEffects = 0;//CFE_BOLD | CFE_AUTOCOLOR;
-    //				ctl.SetSelectionCharFormat(cfm);
-    //				cfm.dwMask = CFM_BOLD;
-    //				cfm.dwEffects = CFE_BOLD;
-    //				ctl.SetSelectionCharFormat(cfm);
-    //               }
-    //               str = "";
-    //           }
-    //	}
-    //}
-    //ctl.SetSel(start, end);
 }
+
 void CScriptView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
     long start, end, pos;

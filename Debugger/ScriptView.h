@@ -135,7 +135,7 @@ public:
     //virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
     void SetScriptFileName(LPCTSTR filePath) { m_ScriptFileName = filePath; };
     //BOOL ReadScriptAsHTML();
-    void HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, ThreadId threadId, Scope *pScope);
+    void HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, ThreadId threadId, Scope *pScope, ui32 pos = -1);
     void ClearHighlight(bool invalidateBreakpoints);
     void SetBreakPointMarker(ui32 line, BREAKPOINT_MARKER marker);
     void SetAllBreakpointsMarker(bool invalidate);

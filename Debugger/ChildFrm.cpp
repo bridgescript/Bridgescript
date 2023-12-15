@@ -180,7 +180,7 @@ void CChildFrame::OnLButtonUp(UINT nFlags, CPoint point)
         m_pos = pos;
         m_bp = point;
         m_bp.y += m_pos;
-        m_bp.y = (m_bp.y / m_imgSizeY) * m_imgSizeY;// +2;
+        //latest!////m_bp.y = (m_bp.y / m_imgSizeY) * m_imgSizeY;// +2;
         //BREAKPOINT_MARKER marker = BREAKPOINT_INVALID;
         int line = m_bp.y / m_imgSizeY;
         BREAKPOINT br;

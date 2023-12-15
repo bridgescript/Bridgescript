@@ -49,7 +49,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
     ON_MESSAGE(WM_ON_DEBUGGER_BREAK_HIT, &CMainFrame::OnDebuggerBreakHit)
     ON_MESSAGE(WM_ON_SET_STARTUP_SCRIPT, &CMainFrame::OnSetStartupScript)
     ON_MESSAGE(WM_ON_CLEAR_STARTUP_SCRIPT, &CMainFrame::OnClearStartupScript)
-    ON_MESSAGE(WM_ON_SCRIPT_COMPILE_ERROR, &CMainFrame::OnScriptCompileError)
+    //ON_MESSAGE(WM_ON_SCRIPT_COMPILE_ERROR, &CMainFrame::OnScriptCompileError)
     //ON_MESSAGE(WM_ON_END_DEBUG_THREAD, &CMainFrame::OnOnEndDebugThread)
     ON_MESSAGE(WM_ON_BEGIN_THREAD, &CMainFrame::OnBeginThread)
     ON_MESSAGE(WM_ON_END_THREAD, &CMainFrame::OnEndThread)
@@ -723,12 +723,12 @@ afx_msg LRESULT CMainFrame::OnClearStartupScript(WPARAM wParam, LPARAM lParam) {
     return 0;
 }
 
-afx_msg LRESULT CMainFrame::OnScriptCompileError(WPARAM wParam, LPARAM lParam) {
-    if (CScriptView *pScriptView = GetScriptView(wParam)) {
-        pScriptView->HighlightLine(HIGHLIGHT_COMPILE_ERROR, wParam, lParam, INVALID_THREAD_ID, 0);
-    }
-    return 0;
-}
+//afx_msg LRESULT CMainFrame::OnScriptCompileError(WPARAM wParam, LPARAM lParam) {
+//    if (CScriptView *pScriptView = GetScriptView(wParam)) {
+//        pScriptView->HighlightLine(HIGHLIGHT_COMPILE_ERROR, wParam, lParam, INVALID_THREAD_ID, 0);
+//    }
+//    return 0;
+//}
 
 void CMainFrame::PropagateBreakpoints() {
     m_wndProperties.PropagateBreakpoints();

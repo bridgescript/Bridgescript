@@ -266,14 +266,17 @@ void COutputList::OnLbnDblclk()
                     CString path = sub.Left(pathEnd - pathStart);
                     sub = s.Right(s.GetLength() - lineStart);
                     CString ln = sub.Left(lineEnd - lineStart);
+					int beginPos = sub.Find(_T(":"));
+					CString ps = sub.Right(sub.GetLength() - beginPos - 2);
 
                     WPARAM fileId = 0;
-                    LPARAM line = atoi(_bstr_t(ln));
+					ui32 line = atoi(_bstr_t(ln));
+					ui32 pos = atoi(_bstr_t(ps));
                     CMainFrame* pMainFrame = DYNAMIC_DOWNCAST(CMainFrame, GetTopLevelFrame());
                     //pMainFrame->PostMessageW(WM_ON_SCRIPT_COMPILE_ERROR, fileId, line);
                     if (path.GetLength()) {
                         if (CScriptView *pCScriptView = pMainFrame->GetScriptView(path)) {
-                            pCScriptView->HighlightLine(type, 0, line - 1, INVALID_THREAD_ID, 0);
+                            pCScriptView->HighlightLine(type, 0, line - 1, INVALID_THREAD_ID, nullptr, pos - 1);
                         }
                     }
                 }
