@@ -165,15 +165,15 @@ void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, Thr
 		int nLineLength = ctl.LineLength(ctl.LineIndex(line)) + 1;
 		CString strText;
 		ctl.GetLine(line, strText.GetBufferSetLength(nLineLength), nLineLength);
-		CString word;
-		for (int i = pos; i < strText.GetLength(); ++i) {
+		//CString word;
+		int i = pos;
+		for (; i < strText.GetLength(); ++i) {
 			if (!isalnum(strText[i])) {
 				break;
 			}
-			word.AppendChar(strText[i]);
 		}
 
-		ctl.SetSel(idx + pos, idx + pos + word.GetLength()); // select the word
+		ctl.SetSel(idx + pos, idx + pos + (pos == i ? 1 : i - pos)); // select the word
 
 		ctl.SetModify(FALSE);
 	}

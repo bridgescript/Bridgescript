@@ -39,7 +39,7 @@ protected:
 public:
 	virtual ~CFileView();
     inline BOOL IsStartUpScriptSet() { return m_wndFileTree.m_StartUpScript.GetLength() != 0; };
-    inline CString GetStartUpScriptPath() { return m_wndFileTree.m_StartUpScriptDir + m_wndFileTree.m_StartUpScript; };
+    inline CString GetStartUpScriptPath() { return m_wndFileTree.m_StartUpScriptDir + _T("\\") + m_wndFileTree.m_StartUpScript; };
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
