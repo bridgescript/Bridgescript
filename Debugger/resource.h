@@ -98,16 +98,13 @@
 #define IDR_TOOLBAR1                    314
 #define IDB_BITMAP1                     315
 #define IDB_BREAKPOINTS                 316
-#define IDB_BITMAP2                     317
 #define IDB_TREE_MARKERS                318
 #define IDD_TAB_DLG                     319
-#define IDB_BITMAP3                     319
 #define IDR_POPUP_BREAKPOINTS           321
 #define IDR_POPUP_VARLIST               322
-#define IDB_BITMAP4                     324
 #define IDB_PNG_BP_DISABLED             327
 #define IDB_PNG_BP_ENABLED              328
-#define IDB_BITMAP5                     329
+#define IDB_MARKERS                     329
 #define IDC_VERSION                     1000
 #define IDC_MFCLINK1                    1001
 #define IDC_WEB_LINK                    1001

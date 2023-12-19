@@ -78,7 +78,7 @@ BOOL CChildFrame::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dw
 
         nFlags |= /*(theApp.m_bHiColorIcons) ? */ILC_COLOR24/* : ILC_COLOR4*/;
 
-        UINT uiBmpId = /*theApp.m_bHiColorIcons ? IDB_BREAKPOINTS : */IDB_BITMAP5;
+        UINT uiBmpId = /*theApp.m_bHiColorIcons ? IDB_BREAKPOINTS : */IDB_MARKERS;
 
         bmp.LoadBitmap(uiBmpId);
         bmp.GetBitmap(&bmpObj);

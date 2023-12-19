@@ -5,9 +5,9 @@
 #define VERSION_MINOR 0
 
 #define VERSION_3 45279
-#define VERSION_4 15327
+#define VERSION_4 20944
 
-#define BUILD_DATE "12/19/2023 7:21:25 AM"
+#define BUILD_DATE "12/19/2023 10:03:12 AM"
 
 #define RELEASE_TYPE "(Beta)"
 
