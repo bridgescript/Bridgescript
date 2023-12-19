@@ -11,14 +11,9 @@
 
 using namespace script;
 
-#ifdef RICH_EDIT
-#define CHtmlView   CRichEditView
-#endif // RICH_EDIT
-
-
 // CScriptView
 
-IMPLEMENT_DYNCREATE(CScriptView, CHtmlView)
+IMPLEMENT_DYNCREATE(CScriptView, CRichEditView)
 
 CScriptView::CScriptView() :
     m_currentLine(0) 
@@ -31,10 +26,10 @@ CScriptView::~CScriptView()
 
 void CScriptView::DoDataExchange(CDataExchange* pDX)
 {
-	CHtmlView::DoDataExchange(pDX);
+	CRichEditView::DoDataExchange(pDX);
 }
 
-BEGIN_MESSAGE_MAP(CScriptView, CHtmlView)
+BEGIN_MESSAGE_MAP(CScriptView, CRichEditView)
     ON_WM_CREATE()
     /*ON_COMMAND(ID_DEBUG_RUN, &CScriptView::OnCmdDebugRun)
     ON_COMMAND(ID_DEBUG_STOP, &CScriptView::OnCmdDebugStop)
@@ -43,12 +38,9 @@ BEGIN_MESSAGE_MAP(CScriptView, CHtmlView)
     ON_COMMAND(ID_DEBUG_STEPOVER, &CScriptView::OnCmdDebugStepover)
     ON_COMMAND(ID_DEBUG_STEPOUT, &CScriptView::OnCmdDebugStepout)*/
     ON_WM_DESTROY()
-#ifdef RICH_EDIT
     ON_WM_KEYUP()
     ON_WM_VSCROLL()
     ON_CONTROL_REFLECT(EN_VSCROLL, &CScriptView::OnEnVscroll)
-#endif // RICH_EDIT
-
 END_MESSAGE_MAP()
 
 
@@ -57,12 +49,12 @@ END_MESSAGE_MAP()
 #ifdef _DEBUG
 void CScriptView::AssertValid() const
 {
-	CHtmlView::AssertValid();
+	CRichEditView::AssertValid();
 }
 
 void CScriptView::Dump(CDumpContext& dc) const
 {
-	CHtmlView::Dump(dc);
+	CRichEditView::Dump(dc);
 }
 #endif //_DEBUG
 
@@ -72,55 +64,14 @@ void CScriptView::Dump(CDumpContext& dc) const
 
 int CScriptView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-    if (CHtmlView::OnCreate(lpCreateStruct) == -1)
+    if (CRichEditView::OnCreate(lpCreateStruct) == -1)
         return -1;
 
     // TODO:  Add your specialized creation code here
     return 0;
 }
 
-#ifndef RICH_EDIT
-
-BOOL CScriptView::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext) {
-    // TODO: Add your specialized code here and/or call the base class
-    //HINSTANCE hInstance = theApp.m_hInstance;
-    //HRSRC res = ::FindResource(hInstance, MAKEINTRESOURCE(IDR_HTML2), RT_HTML);
-    ////DWORD dwSize = ::SizeofResource(hInstance, res);
-    //m_TableRowTemplate = (char*)::LoadResource(hInstance, res);
-
-    if (CHtmlView::Create(lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext)) {
-        LoadFromResource(IDR_HTML1);
-        CComPtr<IOleObject> spObj;
-        HRESULT hr = m_pBrowserApp->QueryInterface(IID_IOleObject, (void**)&spObj);
-        if ((S_OK == hr) && (spObj))
-        {
-            RECT r;
-            //activate ActiveX control for tab and other keys to work
-            hr = spObj->DoVerb(OLEIVERB_UIACTIVATE, NULL, NULL, 0, NULL, &r);
-            //hr = spOleObj->DoVerb(OLEIVERB_INPLACEACTIVATE,NULL,NULL,0,NULL,&r);
-            ::CComQIPtr<IOleInPlaceActiveObject> sp(spObj);
-            LONG data = SetWindowLongPtr(m_hWnd, GWL_USERDATA, (LONG)sp.Detach());
-
-            //DISPID_AMBIENT_DLCONTROL:
-
-            //pVarResult->vt = VT_I4;
-            //pVarResult->lVal = DLCTL_DLIMAGES;
-            //DISPID_IDISPATCHEX_GETMEMBERNAME
-            //PutProperty(LPCTSTR lpszProperty, const VARIANT& vtValue)
-            
-            //SetProperty(DISPID_AMBIENT_DLCONTROL, VT_I4, DLCTL_DLIMAGES);
-            
-            //InvokeHelper(DISPID_AMBIENT_DLCONTROL, DISPATCH_PROPERTYPUT, VT_I4, )
-            //Invoke()
-        }
-        return TRUE;
-    }
-    return FALSE;
-}
-#endif // !RICH_EDIT
-
 void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, ThreadId threadId, Scope *pScope, ui32 pos) {
-#ifdef RICH_EDIT
     m_currentLine = line;
     CChildFrame *pFrame =(CChildFrame*) GetParentFrame();
     CRichEditCtrl &ctl = GetRichEditCtrl();
@@ -183,17 +134,13 @@ void CScriptView::HighlightLine(HIGHLIGHT_TYPE type, ui32 fileId, ui32 line, Thr
     if (HIGHLIGHT_ON_BREAK == type) {
         ((CMainFrame*)theApp.m_pMainWnd)->m_wndProperties.UpdateStackList(threadId);
     }
-
-#endif // RICH_EDIT
 }
 
 void CScriptView::ClearHighlight(bool invalidateBreakpoints) {
-#ifdef RICH_EDIT
     CChildFrame *pFrame = (CChildFrame*)GetParentFrame();
     pFrame->SetHighlight(0, HIGHLIGHT_OFF);
     pFrame->SetPos(GetScrollPos(SB_VERT));
     pFrame->Invalidate();
-#endif // RICH_EDIT
 
     SetAllBreakpointsMarker(invalidateBreakpoints);
 }
@@ -204,7 +151,6 @@ void CScriptView::GetPathAndName(_bstr_t &fileName, _bstr_t &path) {
     fileName = m_ScriptFileName.Right(m_ScriptFileName.GetLength() - sep - 1);
 }
 
-#ifdef RICH_EDIT
 void CScriptView::LoadBreakpointMarkers() {
     CMainFrame* pMainFrame = (CMainFrame*)theApp.GetMainWnd();
     _bstr_t fileName, path;
@@ -221,7 +167,6 @@ void CScriptView::LoadBreakpointMarkers() {
 		pFrame->SetBreakpointMarker(line, breakpointInfo.marker);
 	}
 }
-#endif // RICH_EDIT
 
 void CScriptView::SetAllBreakpointsMarker(bool invalidate) {
     CMainFrame* pMainFrame = (CMainFrame*)theApp.GetMainWnd();
@@ -240,18 +185,11 @@ void CScriptView::SetAllBreakpointsMarker(bool invalidate) {
         vector<BREAKPOINT_INFO> breakpoints;
 
         pMainFrame->m_wndProperties.GetBreakpoints(path, fileName, breakpoints);
-#ifdef RICH_EDIT
         CChildFrame* pFrame = (CChildFrame*)GetParentFrame();
-#endif // RICH_EDIT
         for (ui32 i = 0; i < breakpoints.size(); ++i) {
             BREAKPOINT_INFO &breakpointInfo = breakpoints[i];
             ui32 line = breakpointInfo.line - START_POSITION_OFFSET;
-#ifdef RICH_EDIT
             pFrame->SetBreakpointMarker(line, breakpointInfo.marker);
-#else // RICH_EDIT
-            SetBreakPointMarker(line, breakpointInfo.marker);
-#endif // RICH_EDIT
-
         }
     }
 }
@@ -263,18 +201,7 @@ void CScriptView::EnableEditing(bool enable) {
 
 void CScriptView::OnDocumentComplete(LPCTSTR lpszURL)
 {
-#ifndef RICH_EDIT
-    CHtmlView::OnDocumentComplete(lpszURL);
-
-    ReadScriptAsHTML();
-    
-    EnableEditing(theApp.GetDebugger() == 0);
-
-    SetAllBreakpointsMarker(false);
-#else // !RICH_EDIT
     LoadBreakpointMarkers();
-#endif // !RICH_EDIT
-
 
     if (m_breakHitData.threadId) {
         HighlightLine(m_highlightType, m_breakHitData.fileId, m_breakHitData.line, m_breakHitData.threadId, m_breakHitData.pScope);
@@ -283,33 +210,21 @@ void CScriptView::OnDocumentComplete(LPCTSTR lpszURL)
 }
 
 void CScriptView::SetBreakPointMarker(ui32 line, BREAKPOINT_MARKER marker) {
-#ifdef RICH_EDIT
     CChildFrame *pFrame = (CChildFrame*) GetParentFrame();
     pFrame->SetBreakpointMarker(line, marker);
-    return;
-#endif // RICH_EDIT
 }
 
 BOOL CScriptView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-    return CHtmlView::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+    return CRichEditView::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 bool CScriptView::IsModified() {
-#ifdef RICH_EDIT
     return GetRichEditCtrl().GetModify() == TRUE;
-#else // RICH_EDIT
-    if (m_modified) {
-        return true;
-    }
-    _variant_t varValue(false);
-    GetHtmlVarValue("App_ScriptEdited", varValue);
-    return m_modified = (bool)varValue;
-#endif // RICH_EDIT
 }
 
 void CScriptView::OnDestroy() {
-    CHtmlView::OnDestroy();
+	CRichEditView::OnDestroy();
     POSITION pos;
     CString key;
     KeyWordData *p;
@@ -321,7 +236,6 @@ void CScriptView::OnDestroy() {
     
 }
 
-#ifdef RICH_EDIT
 void CScriptView::OnInitialUpdate()
 {
     CRichEditView::OnInitialUpdate();
@@ -690,5 +604,3 @@ void CScriptView::MarkKeyWord(KeyWordData* pkw, long start, long end, long origE
     }
     ctl.SetSel(origEnd, origEnd);
 }
-
-#endif // RICH_EDIT

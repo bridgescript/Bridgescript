@@ -146,9 +146,8 @@ BOOL CMFCApplication1App::InitInstance()
 
 	if (!pDocTemplate)
 		return FALSE;
-#ifdef RICH_EDIT
+
     pDocTemplate->SetContainerInfo(IDR_RichEditDocTestTYPE_CNTR_IP);
-#endif // RICH_EDIT
 
 	AddDocTemplate(pDocTemplate);
 

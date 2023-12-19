@@ -97,7 +97,6 @@ void CChildFrame::OnNcPaint()
     CMDIChildWndEx::OnNcPaint();
 }
 
-#ifdef RICH_EDIT
 int CChildFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     if (CWnd::OnCreate(lpCreateStruct) == -1)
@@ -239,4 +238,3 @@ void CChildFrame::Invalidate() {
     r.right = m_rectBorder.left;
     InvalidateRect(&r);
 }
-#endif // RICH_EDIT

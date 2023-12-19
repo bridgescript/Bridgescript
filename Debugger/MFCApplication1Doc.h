@@ -5,11 +5,7 @@
 
 #pragma once
 
-#ifdef RICH_EDIT
-#define CDocument   CRichEditDoc
-#endif // RICH_EDIT
-
-class CMFCApplication1Doc : public CDocument
+class CMFCApplication1Doc : public CRichEditDoc
 {
 protected: // create from serialization only
 	CMFCApplication1Doc();
@@ -25,9 +21,7 @@ public:
 public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
-#ifdef RICH_EDIT
     virtual CRichEditCntrItem* CreateClientItem(REOBJECT* preo) const;
-#endif // RICH_EDIT
 
 #ifdef SHARED_HANDLERS
 	virtual void InitializeSearchContent();
@@ -57,8 +51,4 @@ public:
     virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
     virtual BOOL CanCloseFrame(CFrameWnd* pFrame);
 };
-
-#ifdef CDocument
-#undef CDocument
-#endif // CDocument
 

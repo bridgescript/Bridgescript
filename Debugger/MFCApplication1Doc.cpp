@@ -11,6 +11,7 @@
 
 #include "MFCApplication1Doc.h"
 #include "ScriptView.h"
+#include "CntrItem.h"
 
 #include <propkey.h>
 
@@ -18,16 +19,11 @@
 #define new DEBUG_NEW
 #endif
 
-#ifdef RICH_EDIT
-#include "CntrItem.h"
-#define CDocument   CRichEditDoc
-#endif // RICH_EDIT
-
 // CMFCApplication1Doc
 
-IMPLEMENT_DYNCREATE(CMFCApplication1Doc, CDocument)
+IMPLEMENT_DYNCREATE(CMFCApplication1Doc, CRichEditDoc)
 
-BEGIN_MESSAGE_MAP(CMFCApplication1Doc, CDocument)
+BEGIN_MESSAGE_MAP(CMFCApplication1Doc, CRichEditDoc)
 END_MESSAGE_MAP()
 
 
@@ -45,7 +41,7 @@ CMFCApplication1Doc::~CMFCApplication1Doc()
 
 BOOL CMFCApplication1Doc::OnNewDocument()
 {
-	if (!CDocument::OnNewDocument())
+	if (!CRichEditDoc::OnNewDocument())
 		return FALSE;
 
 	// TODO: add reinitialization code here
@@ -54,7 +50,6 @@ BOOL CMFCApplication1Doc::OnNewDocument()
 	return TRUE;
 }
 
-#ifdef RICH_EDIT
 IMPLEMENT_SERIAL(CRichEditDocTestCntrItem, CRichEditCntrItem, 0)
 
 CRichEditDocTestCntrItem::CRichEditDocTestCntrItem(REOBJECT* preo, CMFCApplication1Doc* pContainer)
@@ -89,15 +84,11 @@ CRichEditCntrItem* CMFCApplication1Doc::CreateClientItem(REOBJECT* preo) const
 {
     return new CRichEditDocTestCntrItem(preo, const_cast<CMFCApplication1Doc*>(this));
 }
-#endif // RICH_EDIT
-
-
 
 // CMFCApplication1Doc serialization
 
 void CMFCApplication1Doc::Serialize(CArchive& ar)
 {
-#ifdef RICH_EDIT
     if (ar.IsStoring())
     {
         // TODO: add storing code here
@@ -109,26 +100,6 @@ void CMFCApplication1Doc::Serialize(CArchive& ar)
     }
     CRichEditDoc::m_bRTF = FALSE;
     CRichEditDoc::Serialize(ar);
-#else // RICH_EDIT
-	if (ar.IsStoring())
-	{
-		// TODO: add storing code here
-        POSITION pos = GetFirstViewPosition();
-        if (CScriptView *pScriptView = static_cast<CScriptView*>(GetNextView(pos))) {
-            //pScriptView->SetScriptFileName(lpszPathName);
-            pScriptView->EnableEditing(false);
-            if (!pScriptView->Save(ar)) {
-                pScriptView->EnableEditing(true);
-                throw new CFileException(CFileException::genericException);
-            }
-            pScriptView->EnableEditing(true);
-        }
-	}
-	else
-	{
-		// TODO: add loading code here
-	}
-#endif // RICHEDIT
 }
 
 #ifdef SHARED_HANDLERS
@@ -190,12 +161,12 @@ void CMFCApplication1Doc::SetSearchContent(const CString& value)
 #ifdef _DEBUG
 void CMFCApplication1Doc::AssertValid() const
 {
-	CDocument::AssertValid();
+	CRichEditDoc::AssertValid();
 }
 
 void CMFCApplication1Doc::Dump(CDumpContext& dc) const
 {
-	CDocument::Dump(dc);
+	CRichEditDoc::Dump(dc);
 }
 #endif //_DEBUG
 
@@ -205,20 +176,14 @@ void CMFCApplication1Doc::Dump(CDumpContext& dc) const
 
 BOOL CMFCApplication1Doc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-#ifdef RICH_EDIT
-
-    if (!CDocument::OnOpenDocument(lpszPathName))
+    if (!CRichEditDoc::OnOpenDocument(lpszPathName))
         return FALSE;
-#endif // RICH_EDIT
 
     // TODO:  Add your specialized creation code here
     POSITION pos = GetFirstViewPosition();
     if (CScriptView *pScriptView = static_cast<CScriptView*>(GetNextView(pos))) {
         pScriptView->SetScriptFileName(lpszPathName);
-#ifdef RICH_EDIT
         pScriptView->OnDocumentComplete(NULL);
-#endif // RICH_EDIT
-
         return TRUE;
     }
     
@@ -235,7 +200,7 @@ BOOL CMFCApplication1Doc::OnSaveDocument(LPCTSTR lpszPathName)
         pScriptView->SetScriptFileName(lpszPathName);// ar.GetFile()->GetFileName());
                                                          //pScriptView->EnableEditing(false);
     }
-    return CDocument::OnSaveDocument(lpszPathName);
+    return CRichEditDoc::OnSaveDocument(lpszPathName);
 }
 
 
@@ -250,5 +215,5 @@ BOOL CMFCApplication1Doc::CanCloseFrame(CFrameWnd* pFrame)
         }
     }
 
-    return CDocument::CanCloseFrame(pFrame);
+    return CRichEditDoc::CanCloseFrame(pFrame);
 }

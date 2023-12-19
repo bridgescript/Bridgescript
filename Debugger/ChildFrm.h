@@ -16,7 +16,6 @@ public:
 
 // Attributes
 public:
-#ifdef RICH_EDIT
     void SetPos(int pos);
     int GetImgSizeY() const { return m_imgSizeY; }
 protected:
@@ -34,7 +33,6 @@ protected:
     map<int, BREAKPOINT>        m_breakpoints;
     int                         m_highlightLine;
     HIGHLIGHT_TYPE              m_highlightType;
-#endif // RICH_EDIT
 
 // Operations
 public:
@@ -56,11 +54,9 @@ public:
 protected:
 
 	DECLARE_MESSAGE_MAP()
-#ifdef RICH_EDIT
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnPaint();
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-#endif // RICH_EDIT
 
 public:
     virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_OVERLAPPEDWINDOW, const RECT& rect = rectDefault, CMDIFrameWnd* pParentWnd = NULL, CCreateContext* pContext = NULL);

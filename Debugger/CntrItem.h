@@ -1,10 +1,6 @@
 
 // CntrItem.h : interface of the CRichEditDocTestCntrItem class
 //
-//#ifdef RICH_EDIT
-
-
-
 #pragma once
 
 class CMFCApplication1Doc;
@@ -37,5 +33,3 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 };
-
-//#endif // RICH_EDIT
