@@ -397,8 +397,9 @@ void CMFCApplication1App::OnCmdDebugStepout() {
 BOOL CMFCApplication1App::LoadScript() {
     if (!m_ScriptRunnerThread.GetThreadId()) {
         CMainFrame *pMainFrame = (CMainFrame*)m_pMainWnd;
+		if (!pMainFrame->IsStartUpScriptSet()) return FALSE;
         string scriptPath = (LPCSTR)_bstr_t(pMainFrame->GetStartUpScriptPath());
-        if (scriptPath.empty()) return FALSE;
+		if (scriptPath.empty()) return FALSE;
         StdOutInterface *pStdOutInterface = pMainFrame->GetStdOutInterface();
         pStdOutInterface->Clear();
         smart_ptr<ScriptRunner> spRunner(new ScriptRunner(scriptPath, pStdOutInterface));
