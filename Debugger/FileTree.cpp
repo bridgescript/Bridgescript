@@ -106,7 +106,7 @@ void CPcNode::GetContent()
 
 	DWORD CharCount = GetLogicalDriveStrings(MaxBuffer, Buffer.GetBufferSetLength(MaxBuffer));
 
-	for (int i = 0; i < CharCount;) {
+	for (ui32 i = 0; i < CharCount;) {
 		CString Drive = &Buffer.GetBuffer()[i];
 		i += Drive.GetLength() + 1;
 		int img = 5;

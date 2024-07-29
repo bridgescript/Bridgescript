@@ -1,12 +1,10 @@
 #pragma once
-#include "HTMLElemEvents.h"
 #include "../Script/Basic.h"
 #include "../Script/Debugger.h"
 #include "../Script/Script.h"
 //#include "smart_ptr.h"
 #include "SafeThread.h"
 #include "MainFrm.h"
-#include "JScriptExternal.h"
 
 using namespace script;
 using namespace mb_thread_lib;
