@@ -1,8 +1,10 @@
 # BridgeScript programming language
-https://www.bridgescript.com/
+[www.bridgescript.com](https://www.bridgescript.com/)<br>
+
 
 > [!NOTE]
-> This is my study project, however, it's fully functional and includes Visual Debugger.
+> This is my study project, however, it's fully functional and includes Visual Debugger.<br>
+> [Bridgescript Source Code](https://github.com/bridgescript/Bridgescript)
 
 Bridge script is statically typed, platform independent programming language. It's syntactically similar to C language. Bridge script does not have any built-in APIs in the interpreter. It provides mechanism to invoke external functions by defining a bridge (Library type) to invoke. Bridge script syntax derived from C with simplicity in mind and built-in memory management. If you are interested to get your hands on the Bridge script interpreter  [contact me ↗](http://www.linkedin.com/in/mikhail-botcharov-52362b17), otherwise you can play with it using [Bridge script debugger](#debugger).
 
