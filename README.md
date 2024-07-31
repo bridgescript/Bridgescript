@@ -15,6 +15,15 @@ Bridge script is statically typed, platform independent programming language. It
 -  [Functions](#functions)
 -  [References](#references)
 -  [Bridge script function and C function relationship](#func_rel)
+-  [Library type (Bridge)](#lib_type)
+-  [Built-in functions](#built_in)
+-  [Operators](#operators)
+-  [Special operators](#spec_op)
+-  [Statements](#statements)
+-  [Bridge script references and C pointers relationship](#pointers)
+-  [Run-time error handling](#error)
+-  [Bridge script examples](#examples)
+-  [Author][#aut]
 
 <a name="syntax"/>
 
@@ -210,9 +219,199 @@ GetRef(refSt);
 |**Function invocation**|**Function invocation**|
 |*`i32 var @= fn(10);`*|*`i32 *p = fn(10);`*|
 
+
+<a name="lib_type"/>
+
+### Library type (Bridge)
+Library type allows dynamic linking with external library. If external function return type is void then use ui32 as return type for library function description. To describe library function arguments only types of arguments are allowed.
+Either library name or library path is allowed.
+```c++
+lib ("kernel32.dll") {
+    ui32 GetModuleHandleA(array<ui8>@); // HMODULE GetModuleHandleA(LPCSTR lpModuleName);
+} kernel;
+array<ui8> moduleName @= str2arr("user32.dll");
+ui32 handle = kernel.GetModuleHandleA(moduleName);
+```
+
+<a name="built_in"/>
+
+### Built-in functions
+*`array<ui8>@ str2arr(string@)`* - this function converts script's string to array of bytes.
+*`array<ui16>@ str2warr(string@)`* - this function converts script's string to array of words (as Unicode).
+*`string@ arr2str(array<ui8>@)`* - this function converts array of bytes to string.
+*`string@ warr2str(array<ui16>@)`* - this function converts array of words (as unicode) to string.
+
+<a name="operators"/>
+
+### Operators
+These operators have the same functionality as in C.
+Arithmetic operators:
+*`+`*, *`++`*, *`+=`*, *`-`*, *`--`*, *`-=`*, *`*`*, *`*=`*, *`/`*, *`/=`*, *`%`*, *`%=`*, *`=`*
+Logical operators:
+*`||`*, *`&&`*, *`!`*
+
+Bitwise operators:
+*`&`*, *`|`*, *`~`*, *`^`*, *`^=`*, *`>>`*, *`<<`*
+
+Comparison operators:
+*`==`*, *`!=`*, *`<`*, *`<=`*, *`>`*, *`>=`*
+
+<a name="spec_op"/>
+
+### Special operators
+*`@=`* - this is reference assignment operator.
+```c++
+ui32 v0 = 10;
+ui32 v1 @= v0; // now both variables point to the same memory
+```
+*`@`* - this operator is used to pass/return a variable to/from a function and to declare structure member variables.
+```c++
+function ui32@ Get(ui32 a0, ui32@a1, ui32@@ a2) {
+    a2 @= a1; 
+    return a0;
+}
+struct A {
+    ui32@ v32;
+    i8@   v0, v1, v2;
+};
+```
+*`lock()`* - this operator locks memory which variable is referenced to. This operator should be used when you are passing local variable to asynchronous C function and caller goes out of scope. For example calling CreateThread() and passing local data as a parameter to the thread releases local variable when caller goes out of scope, hence you need to lock it and then unlock it in the thread.
+*`unlock()`* - this operator unlocks memory locked by *`lock()`*
+```c++
+function ui32 Callback(array<ui8>@ a) {
+    return a[0];
+}
+struct MyData {
+    ui32 v0;
+    function<Callback> fn;
+    array<ui8, 4> v1;
+};
+function ui32 ThreadFoo(MyData@ arg) {
+    unlock(arg);
+    return arg.fn(arg.v1);
+}
+struct SECURITY_ATTRIBUTES {
+    ui32   nLength;
+    ui32   lpSecurityDescriptor;
+    bool   bInheritHandle;
+};
+lib("kernel32.dll") {
+    ui32 CreateThread(SECURITY_ATTRIBUTES@, ui32, function<ThreadFoo>, MyData@, ui32, ui32@);
+    ui32 WaitForMultipleObjects(ui32, array<ui32>@, ui32, ui32);
+    ui32 CloseHandle(ui32);
+} kernel;
+SECURITY_ATTRIBUTES sa;
+MyData data;
+ui32 threadId;
+data.v1[0] = 10;
+array<ui32, 1> handle;
+handle[0] = kernel.CreateThread(sa, 0, ThreadFoo, lock(data), 0, threadId);
+kernel.WaitForMultipleObjects(1, handle, true, -1);
+kernel.CloseHandle(handle[0]);
+```
+*`sizeof()`* - this operator returns size of memory allocated for that variable, it's useful to get size of a struct and an array, if array is allocated externally this operator will return 0.
+*`cast<Type>()`* - this is typecast operator. This is very powerful operator and it breaks memory constrains, when you typecast a variable static type paradigm is broken, as a result you might have memory leaks and memory corruption.
+```c++
+struct A {
+    ui32 v0;
+    ui32 v1;
+} a;
+a.v0 = 10;
+a.v1 = 20;
+ui64 v @= cast<ui64>(a);
+array<ui8, 4> arr1dim;
+array<ui8, 2, 2> arr2dim;
+ui32 i = 0;
+for(; i < 4; ++i) {
+    arr1dim[i] = 1;
+}
+struct Typecasted {
+    ui8 v0, v1, v2, v3;
+} tc;
+tc @= cast<Typecasted>(arr1dim); // now both variables points to the same memory
+arr2dim = arr1dim; // copy by value
+array<ui8> arrNodim @= arr1dim; // now arrNodim points to the same memory
+```
+
+<a name="statements"/>
+
+### Statements
+*`if`*, *`else`*, *`for`*, *`while`*, *`break`*, *`continue`*, *`switch`*, *`case`*, *`return`* - these statements have the same meaning as in C.
+include statement:
+```c++
+include "script_to_inlcude.bridge";
+```
+*`include`* statement path is relative to the current script.
+
+<a name="pointers"/>
+
+### Bridge script references and C pointers relationship
+|Bridge script|C|
+|-------|-------|
+|*`struct A {   `*<br>*`  i8@ v0, v1;`*<br>*`}           ;`*<br>*`struct B {`*<br>*`  A@ v0;    `*<br>*`};        `*<br>*`struct C {       `*<br>*`  array<i8@>@ v0;`*<br>*`};               `*|*`struct A {      `*<br>*`  char *v0, *v1;`*<br>*`};              `*<br>*`struct  B {`*<br>*`  A *v0;     `*<br>*`};         `*<br>*`struct C {  `*<br>*`  char **v0;`*<br>*`};          `*|
+
+
+<a name="error"/>
+
+### Run-time error handling
+If a run-time error occurs an error object is thrown, to catch it use "`error`" statement - *`error(e){}`*
+Error object data members:
+*`name`* - name of the error, type is *`string`*.
+*`line`* - line number where error occurred, type is *`ui32`*.
+*`position`* - first character position of the symbol, type is *`ui32`*.
+*`file`* - file path, type is *`string`*.
+*`trace`* - stack trace, type is *`string`* (new line separated strings).
+*`symbol`* - symbol name, type is *`string`*.
+
+```c++
+function i8 f0() { 
+    ui32 v0 = 100, v1 = 0; 
+    v0 = v0 / v1;
+}
+function i8 f1() {
+    f0();
+}
+f1();
+error (e) {
+    string err = e.name;
+    string trace = e.trace;
+}
+```
+
+<a name="examples"/>
+
+### Bridge script examples
+
+-    [Hello World! ↗](https://github.com/bridgescript/Hello-World)
+-    [Threads ↗](https://github.com/bridgescript/Threads)
+-    [Window ↗](https://github.com/bridgescript/Window)
+
 <a name="debugger"/>
 
 ### Bridge script debugger
+Bridge script interpreter provides debugging facilities through debugging API. I created Bridge debugger for Microsoft Windows(c) platform. It exposes all standard debugging features using GUI. Bridge debugger has built-in interpreter and provides such features as:
+
+-    compile/decompile script
+-    edit script (this feature is limited to simple editing, it does not replace editing tool, but rather nice to have if you need to fix your code)
+-    file view/browser
+-    debugger actions: run, step over, step in, step out, pause and stop
+-    set/delete breakpoints
+-    breakpoints view
+-    function view/browser (available when script is running)
+-    global variables view (available when script is running)
+-    threads view (available when script is running)
+-    thread stack and variables view for each runnig thread (available when script is running)
+-    build and debug output views
+-    Compiled Bridge script can be debugged without decompiling it.
+
+<a name="aut"/>
+
+### Author
+
+[Mikhail Botcharov ↗](http://www.linkedin.com/in/mikhail-botcharov-52362b17)
+
+
+***Copyright 2019 Mikhail Botcharov. All Rights Reserved.***
 
 <!--
 **bridgescript/Bridgescript** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
