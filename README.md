@@ -23,6 +23,7 @@ Bridge script is statically typed, platform independent programming language. It
 -  [Bridge script references and C pointers relationship](#pointers)
 -  [Run-time error handling](#error)
 -  [Bridge script examples](#examples)
+-  [Debugger GUI](#ui)
 -  [Author][#aut]
 
 <a name="syntax"/>
@@ -403,6 +404,25 @@ Bridge script interpreter provides debugging facilities through debugging API. I
 -    thread stack and variables view for each runnig thread (available when script is running)
 -    build and debug output views
 -    Compiled Bridge script can be debugged without decompiling it.
+
+<a name="ui"/>
+
+### Debugger GUI
+In order to run a script you must set start up script using pop up file menu, Compile/Decompile menu items available as well. To execute debugger actions: run, step over, step in, step out, pause and stop you can use toolbar, application menu or keyboard shortcuts. Following views are clickable: Function Browser, Build, Debug, Breakpoints, Threads, and Stack view of Thread tab.
+#### Breakpoints
+![Breakpoints](/imgs/debugger_view.jpg)
+#### threads
+![threads](/imgs/debugger_view_2.jpg)
+#### file menu
+![file menu](/imgs/file_menu.jpg)
+#### global variables
+![global variables](/imgs/global_vars.jpg)
+#### variables view
+![variables view](/imgs/global_vars_2.jpg)
+#### thread view
+![thread view](/imgs/thread_view.jpg)
+#### stack view
+![stack view](/imgs/stack_view.jpg)
 
 <a name="aut"/>
 
