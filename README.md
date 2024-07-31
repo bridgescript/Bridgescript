@@ -141,6 +141,7 @@ str = arr1;
 Function definition syntax:
 
 *`function Type FooName([arguments if any]) { return value; }`*
+
 Where Type is function return type, function can have any number of arguments and return statement is optional.
 ```c++
 function ui32 GetSum(ui32 a0, ui32 a1) {
