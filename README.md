@@ -1,6 +1,8 @@
 # BridgeScript programming language
 https://www.bridgescript.com/
-## This is my study project 
+
+> [!NOTE]
+> This is my study project, however, it's fully functional and includes Visual Debugger.
 
 
 <!--
