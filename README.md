@@ -97,8 +97,11 @@ MyStruct var1;
 Arrays declarations (where Type is any Bridge script type except array):
 
 *`array<Type>`* - declares array without size.
+
 *`array<Type, dim>`* - declares array of size dim.
+
 *`array<Type, dim0, dim1>`* - declares 2-dimensional array.
+
 Array can be declared with any number of dimensions. Dimension of array can be an expression evaluated at run time, in this case only one-dimensional array is allowed. Expression based dimension allows dynamically allocate array at run-time.
 ```c++
 function array<ui8>@ AllocateArray(ui32 size) {
@@ -238,9 +241,13 @@ ui32 handle = kernel.GetModuleHandleA(moduleName);
 
 ### Built-in functions
 *`array<ui8>@ str2arr(string@)`* - this function converts script's string to array of bytes.
+
 *`array<ui16>@ str2warr(string@)`* - this function converts script's string to array of words (as Unicode).
+
 *`string@ arr2str(array<ui8>@)`* - this function converts array of bytes to string.
+
 *`string@ warr2str(array<ui16>@)`* - this function converts array of words (as unicode) to string.
+
 
 <a name="operators"/>
 
@@ -248,6 +255,7 @@ ui32 handle = kernel.GetModuleHandleA(moduleName);
 These operators have the same functionality as in C.
 Arithmetic operators:
 *`+`*, *`++`*, *`+=`*, *`-`*, *`--`*, *`-=`*, *`*`*, *`*=`*, *`/`*, *`/=`*, *`%`*, *`%=`*, *`=`*
+
 Logical operators:
 *`||`*, *`&&`*, *`!`*
 
@@ -277,6 +285,7 @@ struct A {
 };
 ```
 *`lock()`* - this operator locks memory which variable is referenced to. This operator should be used when you are passing local variable to asynchronous C function and caller goes out of scope. For example calling CreateThread() and passing local data as a parameter to the thread releases local variable when caller goes out of scope, hence you need to lock it and then unlock it in the thread.
+
 *`unlock()`* - this operator unlocks memory locked by *`lock()`*
 ```c++
 function ui32 Callback(array<ui8>@ a) {
@@ -311,6 +320,7 @@ kernel.WaitForMultipleObjects(1, handle, true, -1);
 kernel.CloseHandle(handle[0]);
 ```
 *`sizeof()`* - this operator returns size of memory allocated for that variable, it's useful to get size of a struct and an array, if array is allocated externally this operator will return 0.
+
 *`cast<Type>()`* - this is typecast operator. This is very powerful operator and it breaks memory constrains, when you typecast a variable static type paradigm is broken, as a result you might have memory leaks and memory corruption.
 ```c++
 struct A {
@@ -356,12 +366,19 @@ include "script_to_inlcude.bridge";
 
 ### Run-time error handling
 If a run-time error occurs an error object is thrown, to catch it use "`error`" statement - *`error(e){}`*
+
 Error object data members:
+
 *`name`* - name of the error, type is *`string`*.
+
 *`line`* - line number where error occurred, type is *`ui32`*.
+
 *`position`* - first character position of the symbol, type is *`ui32`*.
+
 *`file`* - file path, type is *`string`*.
+
 *`trace`* - stack trace, type is *`string`* (new line separated strings).
+
 *`symbol`* - symbol name, type is *`string`*.
 
 ```c++
