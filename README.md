@@ -26,7 +26,7 @@ Bridge script is statically typed, platform independent programming language. It
 -  [Run-time error handling](#error)
 -  [Bridge script examples](#examples)
 -  [Debugger GUI](#ui)
--  [Author][#aut]
+-  [Author](#aut)
 
 <a name="syntax"/>
 
