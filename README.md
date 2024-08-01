@@ -430,19 +430,19 @@ Bridge script interpreter provides debugging facilities through debugging API. I
 ### Debugger GUI
 In order to run a script you must set start up script using pop up file menu, Compile/Decompile menu items available as well. To execute debugger actions: run, step over, step in, step out, pause and stop you can use toolbar, application menu or keyboard shortcuts. Following views are clickable: Function Browser, Build, Debug, Breakpoints, Threads, and Stack view of Thread tab.
 #### Breakpoints
-![Breakpoints](/imgs/debugger_view.jpg)
+![Breakpoints](https://www.bridgescript.com/debugger_view.jpg)
 #### threads
-![threads](/imgs/debugger_view_2.jpg)
+![threads](https://www.bridgescript.com/debugger_view_2.jpg)
 #### file menu
-![file menu](/imgs/file_menu.jpg)
+![file menu](https://www.bridgescript.com/file_menu.jpg)
 #### global variables
-![global variables](/imgs/global_vars.jpg)
+![global variables](https://www.bridgescript.com/global_vars.jpg)
 #### variables view
-![variables view](/imgs/global_vars_2.jpg)
+![variables view](https://www.bridgescript.com/global_vars_2.jpg)
 #### thread view
-![thread view](/imgs/thread_view.jpg)
+![thread view](https://www.bridgescript.com/thread_view.jpg)
 #### stack view
-![stack view](/imgs/stack_view.jpg)
+![stack view](https://www.bridgescript.com/stack_view.jpg)
 
 <a name="aut"/>
 
