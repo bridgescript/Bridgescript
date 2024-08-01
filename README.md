@@ -193,6 +193,7 @@ function bool GetRef(ui32@@ a0) {
 }
 ui32 var = 10;
 GetRef(var); // this function call will overwrite var reference by reference to _var
+// now var references the same memory address as _var
 ```
 Another way to pass a reference by reference is to declare an array of reference type of size 1 and pass it by reference.
 ```c++
