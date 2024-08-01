@@ -25,6 +25,7 @@ Bridge script is statically typed, platform independent programming language. It
 -  [Bridge script references and C pointers relationship](#pointers)
 -  [Run-time error handling](#error)
 -  [Bridge script examples](#examples)
+-  [CLI](#usage)
 -  [Debugger GUI](#ui)
 -  [Author](#aut)
 
@@ -399,6 +400,7 @@ error (e) {
 }
 ```
 
+##
 <a name="examples"/>
 
 ### Bridge script examples
@@ -407,6 +409,23 @@ error (e) {
 -    [Threads ↗](https://github.com/bridgescript/Threads)
 -    [Window ↗](https://github.com/bridgescript/Window)
 
+##
+<a name="usage"/>
+
+### CLI
+To run bridge script:
+```cmd
+script.exe script_file_path
+```
+Compile decompile script:
+```cmd
+script.exe script_file_path [options]
+```
+`[options]`
+-    `-c` - compile only
+-    `-d` - decompile only
+
+##
 <a name="debugger"/>
 
 ### Bridge script debugger
@@ -444,6 +463,7 @@ In order to run a script you must set start up script using pop up file menu, Co
 #### stack view
 ![stack view](https://www.bridgescript.com/stack_view.jpg)
 
+##
 <a name="aut"/>
 
 ### Author
