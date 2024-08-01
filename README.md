@@ -419,7 +419,7 @@ To run bridge script:
 ```cmd
 script.exe script_file_path
 ```
-Compile decompile script:
+Compile or decompile script:
 ```cmd
 script.exe script_file_path [options]
 ```
