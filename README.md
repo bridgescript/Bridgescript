@@ -410,7 +410,7 @@ error (e) {
 <a name="debugger"/>
 
 ### Bridge script debugger
-Bridge script interpreter provides debugging facilities through debugging API. I created Bridge debugger for Microsoft Windows(c) platform. It exposes all standard debugging features using GUI. Bridge debugger has built-in interpreter and provides such features as:
+Bridge script interpreter provides debugging facilities through debugging API. I created [Bridge debugger](Release/BridgeDebugger.exe) for Microsoft Windows(c) platform. It exposes all standard debugging features using GUI. Bridge debugger has built-in interpreter and provides such features as:
 
 -    compile/decompile script
 -    edit script (this feature is limited to simple editing, it does not replace editing tool, but rather nice to have if you need to fix your code)
