@@ -40,17 +40,17 @@ Since Bridge script syntax is similar to C syntax I am not going to repeat it he
 All basic Bridge script types have one to one mapping to C types.
 |Bridge script|C|Size|
 |------|------|------|
-|*bool*|*char*|1 byte|
-|*i8*|*char*|1 byte|
-|*ui8*|*unsigned char*|1 byte|
-|*i16*|*short int*|2 bytes|
-|*ui16*|*unsigned short int*|2 bytes|
-|*i32*|*long int*|4 bytes|
-|*ui32*|*unsigned long int*|4 bytes|
-|*i64*|*long long int*|8 bytes|
-|*ui64*|*unsigned long long int*|8 bytes|
-|*float*|*float*|4 bytes|
-|*double*|*double*|8 bytes|
+|*`bool`*|*`char`*|1 byte|
+|*`i8`*|*`char`*|1 byte|
+|*`ui8`*|*`unsigned char`*|1 byte|
+|*`i16`*|*`short int`*|2 bytes|
+|*`ui16`*|*`unsigned short int`*|2 bytes|
+|*`i32`*|*`long int`*|4 bytes|
+|*`ui32`*|*`unsigned long int`*|4 bytes|
+|*`i64`*|*`long long int`*|8 bytes|
+|*`ui64`*|*`unsigned long long int`*|8 bytes|
+|*`float`*|*`float`*|4 bytes|
+|*`double`*|*`double`*|8 bytes|
 
 <a name="prim"/>
 
@@ -352,6 +352,7 @@ array<ui8> arrNodim @= arr1dim; // now arrNodim points to the same memory
 
 ### Statements
 *`if`*, *`else`*, *`for`*, *`while`*, *`break`*, *`continue`*, *`switch`*, *`case`*, *`return`* - these statements have the same meaning as in C.
+
 include statement:
 ```c++
 include "script_to_inlcude.bridge";
