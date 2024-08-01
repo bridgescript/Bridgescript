@@ -56,19 +56,19 @@ All basic Bridge script types have one to one mapping to C types.
 
 ### Const primitive types
 For constant integer values HEX and Binary formats are provided.
-HEX prefixes: *0X*, *0x*
+HEX prefixes: *`0X`*, *`0x`*
 ```c++
 i32 v0 = 0xABCD1234, v1 = 0Xaaaa1111;
 ```
-HEX postfixes: *H*, *h*
+HEX postfixes: *`H`*, *`h`*
 ```c++
 ui8 v0 = A1H, v1 = abh;
 ```
-Binary postfixes: *B*, *b*
+Binary postfixes: *`B`*, *`b`*
 ```c++
 ui8 v0 = 001101B, v1 = 101b;
 ```
-*float* and *double* formats are the same as in C
+*`float`* and *`double`* formats are the same as in C
 ```c++
 double d0 = -.25e-3, d1 = 0.002E-22;
 float f0 = 1.5, f1 = 1.0E+3;
@@ -81,7 +81,7 @@ string str = "This is a string";
 <a name="struct"/>
 
 ### Structure type
-*struct* - this keyword is used to declare structure definition
+*`struct`* - this keyword is used to declare structure definition
 ```c++
 struct MyStruct {
     ui32 v0;
@@ -97,7 +97,7 @@ MyStruct var1;
 
 ### Arrays
 
-Arrays declarations (where Type is any Bridge script type except array):
+Arrays declarations (where Type is any Bridge script type except *`array`* type):
 
 *`array<Type>`* - declares array without size.
 
@@ -370,7 +370,7 @@ include "script_to_inlcude.bridge";
 <a name="error"/>
 
 ### Run-time error handling
-If a run-time error occurs an error object is thrown, to catch it use "`error`" statement - *`error(e){}`*
+If a run-time error occurs an error object is thrown, to catch it use *`error`* statement - *`error(e){}`*
 
 Error object data members:
 
