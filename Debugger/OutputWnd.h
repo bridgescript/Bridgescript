@@ -15,7 +15,7 @@
 #define WM_ON_DEBUGGER_BREAK_HIT        (WM_DEBUGGER_FIRST_MSG + 8)
 #define WM_ON_SET_STARTUP_SCRIPT        (WM_DEBUGGER_FIRST_MSG + 9)
 #define WM_ON_CLEAR_STARTUP_SCRIPT      (WM_DEBUGGER_FIRST_MSG + 10)
-#define WM_ON_SCRIPT_COMPILE_ERROR      (WM_DEBUGGER_FIRST_MSG + 11)
+//#define WM_ON_SCRIPT_COMPILE_ERROR      (WM_DEBUGGER_FIRST_MSG + 11)
 #define WM_ON_SCRIPT_RUNTIME_ERROR      (WM_DEBUGGER_FIRST_MSG + 12)
 //#define WM_ON_END_DEBUG_THREAD          (WM_DEBUGGER_FIRST_MSG + 13)
 #define WM_ON_BEGIN_THREAD              (WM_DEBUGGER_FIRST_MSG + 14)
@@ -47,7 +47,6 @@ protected:
 public:
     afx_msg void OnLbnDblclk();
     afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-//    virtual void DeleteItem(LPDELETEITEMSTRUCT lpDeleteItemStruct);
     virtual void DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/);
 };
 
@@ -93,8 +92,6 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 	DECLARE_MESSAGE_MAP()
-public:
-    //afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 protected:
     afx_msg LRESULT OnOnScriptRuntimeError(WPARAM wParam, LPARAM lParam);
 };

@@ -14,7 +14,6 @@
 #include "../Script/Script.h"
 #include "SafeThread.h"
 #include "MainFrm.h"
-//#include "MFCApplication1_i.h"
 
 //using namespace script;
 using namespace mb_thread_lib;
@@ -34,11 +33,6 @@ class CMFCApplication1App : public CWinAppEx
         void Clear() { 
             CMainFrame* pMainFrame = (CMainFrame*)m_pApp->GetMainWnd(); //theApp.GetMainWnd
             pMainFrame->SendMessage(WM_ON_END_SCRIPT_THREAD, 0, 0);
-            //pMainFrame->m_wndProperties.ClearGlobalVarList();
-            //m_pApp->OnDebugDumpMemory();
-            //m_pApp->UnLoadScript();
-            //TODO("Must release Runner in the MFCApp thread!");
-            //m_pRunner = smart_ptr<ScriptRunner>(0); 
         }
         smart_ptr<ScriptRunner>   m_pRunner;
         CMFCApplication1App      *m_pApp;
@@ -67,22 +61,13 @@ class CMFCApplication1App : public CWinAppEx
             }
         }
         void Init(_Param &param) {
-            //param->m_pRunner->Load();
-            //param->m_pRunner->BeforeExec(param->m_pDebuggerNotify);
         }
         void End(_Param &param) {
-            //param->m_pApp->m_pMainWnd->SendMessage(WM_ON_END_DEBUG_THREAD, 0, 0);
             param->m_pRunner->GetInterpreter().PostRun();
             param->Clear();
-            //param = smart_ptr<Parameter>(0);
         };
         void Term(_Param &param) {
-            //param->Clear();
-            //End(); 
         };
-    public:
-//        Runner() {};
-//        virtual ~Runner(void) {};
     };
 
     typedef CSafeThread<Runner, Parameter> SCRIPT_RUNNER_THREAD;
@@ -135,7 +120,6 @@ public:
 
     private:
         void LoadDebuggerData();
-        //void SaveDebuggerData();
 
         _bstr_t                     m_xmlDebuggerDataPath;
         CComPtr<IXMLDOMDocument>    m_xmlDebuggerData;

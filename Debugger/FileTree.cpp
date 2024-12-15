@@ -10,6 +10,186 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
+/////////////////////////////////////////////////////////////////////////////
+
+void CTreeNode::Load()
+{
+	if (m_ImageId == 4) return; // don't for remote drives
+
+	if (!m_Children.empty()) return;
+
+	GetContent();
+
+	for (auto& item : m_Children) {
+		item->Add();
+	}
+}
+
+void CTreeNode::Add()
+{
+	m_TreeItemHandle = m_TreeCtrl.InsertItem(m_Name, m_ImageId, m_ImageId, m_Parent->GetItemHandle());
+	((CFileTree&)m_TreeCtrl).AddItemRef(m_TreeItemHandle, this);
+}
+
+void CTreeNode::Delete()
+{
+	DeleteChildren();
+	
+	((CFileTree&)m_TreeCtrl).RemoveItemRef(m_TreeItemHandle);
+	m_TreeCtrl.DeleteItem(m_TreeItemHandle);
+}
+
+void CTreeNode::DeleteChildren()
+{
+	for (auto& item : m_Children) {
+		item->Delete();
+	}
+
+	m_Children.clear();
+}
+
+void CTreeNode::OnExpand()
+{
+	for (auto& item : m_Children) {
+		item->Load();
+	}
+}
+
+void CTreeNode::OnCollaps()
+{
+}
+
+CString CTreeNode::GetPath()
+{
+	if (m_Parent) {
+		CString ParentPath = m_Parent->GetPath();
+		return ParentPath + (ParentPath.GetLength() ? _T("\\") : _T("")) + m_Name;
+	}
+	return CString();
+}
+
+CString CTreeNode::GetParentPath()
+{
+	if (m_Parent) {
+		return m_Parent->GetPath();
+	}
+	return CString();
+}
+
+/************************************************************/
+
+void CPcNode::Load()
+{
+	CString PcName;
+	DWORD Size = MAX_COMPUTERNAME_LENGTH + 1;
+	GetComputerName(PcName.GetBufferSetLength(MAX_COMPUTERNAME_LENGTH + 1), &Size);
+	
+	m_Name = PcName;
+
+	m_TreeItemHandle = m_TreeCtrl.InsertItem(PcName, 6, 6);
+
+	((CFileTree&)m_TreeCtrl).AddItemRef(m_TreeItemHandle, this);
+
+	CTreeNode::Load();
+}
+
+void CPcNode::Refresh()
+{
+
+}
+
+void CPcNode::GetContent()
+{
+	const int MaxBuffer = 1024;
+	CString Buffer;
+
+	DWORD CharCount = GetLogicalDriveStrings(MaxBuffer, Buffer.GetBufferSetLength(MaxBuffer));
+
+	for (ui32 i = 0; i < CharCount;) {
+		CString Drive = &Buffer.GetBuffer()[i];
+		i += Drive.GetLength() + 1;
+		int img = 5;
+		Drive.Truncate(2);
+		switch (GetDriveType(Drive))
+		{
+			case DRIVE_FIXED:
+				img = 3;
+				break;
+			case DRIVE_REMOTE:
+				img = 4;
+				Drive += _T(" - NOT IMPLEMENTED :)");
+			default:
+				break;
+		}
+		m_Children.push_back(make_shared<CDirNode>(m_TreeCtrl, this, Drive.MakeUpper(), ENodeType::DRIVE, img));
+	}
+}
+
+/************************************************************/
+
+void CDirNode::Load()
+{
+	CTreeNode::Load();
+}
+
+void CDirNode::GetContent()
+{
+	CFileFind fileFind;
+	
+	if (!fileFind.FindFile(GetPath() + "\\*.*")) return;
+
+	BOOL next = TRUE;
+	
+	std::map<CString, int> files, dirs;
+
+	while (next) {
+		next = fileFind.FindNextFileW();
+		if (fileFind.IsDirectory()) {
+			if (fileFind.GetFileName() != ".") {
+				dirs.insert(std::pair<CString, int>(fileFind.GetFileName(), 0));
+			}
+		}
+		else {
+			CString fileName = fileFind.GetFileName();
+			switch (CFileTree::GetExtentionType(fileName)) {
+			case EXT_TEXT_SCRIPT:
+				files.insert(std::pair<CString, int>(fileName, 1));
+				break;
+			case EXT_BIN_SCRIPT:
+				files.insert(std::pair<CString, int>(fileName, 2));
+				break;
+			default:
+				break;
+
+			}
+		}
+	}
+
+	for (std::map<CString, int>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
+		m_Children.push_back(make_shared<CDirNode>(m_TreeCtrl, this, it->first, ENodeType::DIRECTORY, it->second));
+	}
+
+	for (std::map<CString, int>::iterator it = files.begin(); it != files.end(); ++it) {
+		m_Children.push_back(make_shared<CFileNode>(m_TreeCtrl, this, it->first, it->second));
+	}
+}
+
+void CDirNode::Refresh()
+{
+
+}
+
+/************************************************************/
+
+void CFileNode::Load()
+{
+}
+
+void CFileNode::Refresh()
+{
+
+}
 /////////////////////////////////////////////////////////////////////////////
 // CFileTree
 
@@ -28,6 +208,7 @@ BEGIN_MESSAGE_MAP(CFileTree, CTreeCtrl)
     //ON_COMMAND(ID_SET_STARTUP_SCRIPT, &CFileTree::OnSetStartupScript)
     //ON_COMMAND(ID_COMPILE, &CFileTree::OnCompile)
     //ON_COMMAND(ID_DECOMPILE, &CFileTree::OnDecompile)
+	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, &CFileTree::OnTvnItemexpanding)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -48,6 +229,16 @@ BOOL CFileTree::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 	return bRes;
 }
 
+void CFileTree::AddItemRef(HTREEITEM ItemHandle, CTreeNode* pNode)
+{
+	m_Items.insert(pair<HTREEITEM, CTreeNode*>(ItemHandle, pNode));
+}
+
+void CFileTree::RemoveItemRef(HTREEITEM ItemHandle)
+{
+	m_Items.erase(ItemHandle);
+}
+
 
 void CFileTree::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
@@ -56,102 +247,36 @@ void CFileTree::OnLButtonDblClk(UINT nFlags, CPoint point)
     OpenFile();
 }
 
-void CFileTree::ReloadTree() {
-    DeleteAllItems();
-    LoadTree();
+void CFileTree::ReloadTree(HTREEITEM ParentItemHandle) {
+	
+	auto Item = m_Items.find(ParentItemHandle);
+
+	if (Item != m_Items.end()) {
+		//clean start up script reference
+		ClearStartupScript(m_StartUpScripItemHandle);
+		
+		Item->second->DeleteChildren();
+		Item->second->Load();
+	}
 }
 
-void CFileTree::OpenFile() {
-    HTREEITEM hItem = GetSelectedItem();
-    CString currentItem = GetItemText(hItem);
-    int image, selimage;
-    GetItemImage(hItem, image, selimage);
-    if (image == 0) { // open directory
-        CFileFind fileFind;
-        CString findPath = theApp.GetScriptDir() + "*.*";
-
-        fileFind.FindFile(findPath);
-        BOOL next = TRUE;
-        while (next) {
-            next = fileFind.FindNextFileW();
-            if (fileFind.IsDirectory()) {
-                if (fileFind.GetFileName() == currentItem) {
-                    theApp.SetScriptDir(_bstr_t(fileFind.GetFilePath() + "\\"));
-                    ReloadTree();
-                    break;
-                }
-            }
-        }
-    }
-    else { // open file
-        CString currentPath = theApp.GetScriptDir() + currentItem;
-        theApp.OpenDocumentFile(currentPath);
-    }
+void CFileTree::OpenFile()
+{
+	HTREEITEM hItem = GetSelectedItem();
+	
+	auto Item = m_Items.find(hItem);
+	if (Item != m_Items.end()) {
+		if (Item->second->GetType() == ENodeType::FILE) {
+			CString Path = Item->second->GetPath();
+			theApp.OpenDocumentFile(Path);
+		}
+	}
 }
-void CFileTree::LoadTree() {
-    CFileFind fileFind;
-    _bstr_t scriptPath = theApp.GetScriptDir();
-    if (scriptPath.length()) {
-        fileFind.FindFile(scriptPath + "*.*");
-    }
-    else {
-        fileFind.FindFile();
-    }
-    fileFind.FindNextFileW();
 
-    CString currentDir = fileFind.GetRoot();
-    theApp.SetScriptDir(_bstr_t(currentDir));
-
-    bool dir = currentDir == m_StartUpScriptDir;
-    if (int len = currentDir.GetLength()) {
-        TCHAR lastChar = currentDir.GetAt(len - 1);
-        if ((lastChar == _T('\\')) || (lastChar == _T('/'))) {
-            currentDir.Delete(len - 1);
-        }
-        HTREEITEM hSrc = InsertItem(currentDir, 0, 0);
-        std::map<CString, int> files, dirs;
-        //items.
-        BOOL next = TRUE;
-        while (next) {
-            next = fileFind.FindNextFileW();
-            if (fileFind.IsDirectory()) {
-                if (fileFind.GetFileName() != ".") {
-                    dirs.insert(std::pair<CString, int>(fileFind.GetFileName(), 0));
-                }
-            }
-            else {
-                CString fileName = fileFind.GetFileName();
-                switch (GetExtentionType(fileName)) {
-                    case EXT_TEXT_SCRIPT:
-                        files.insert(std::pair<CString, int>(fileName, 1));
-                        break;
-                    case EXT_BIN_SCRIPT:
-                        files.insert(std::pair<CString, int>(fileName, 2));
-                        break;
-                    default:
-                        break;
-
-                }
-            }
-        };
-        for (std::map<CString, int>::iterator it = dirs.begin(); it != dirs.end(); ++it) {
-            InsertItem(it->first, it->second, it->second, hSrc);
-        }
-
-        for (std::map<CString, int>::iterator it = files.begin(); it != files.end(); ++it) {
-            HTREEITEM hi = InsertItem(it->first, it->second, it->second, hSrc);
-            if (m_StartUpScript.GetLength() && dir && (it->first == m_StartUpScript)) {
-                TVITEMW tvi;
-                tvi.mask = TVIF_STATE | TVIF_HANDLE;
-                tvi.hItem = hi;
-                tvi.state = TVIS_BOLD;
-                tvi.stateMask = TVIS_BOLD;
-                SetItem(&tvi);
-            }
-        }
-
-        Expand(hSrc, TVE_EXPAND);
-    }
+void CFileTree::LoadTree()
+{
+	m_RootNode = make_shared<CPcNode>(*this, nullptr);
+	m_RootNode->Load();
 }
 
 int CFileTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -166,48 +291,50 @@ int CFileTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 
 void CFileTree::OnSetStartupScript() {
-    // TODO: Add your command handler code here
-    HTREEITEM hItem = GetSelectedItem();
-    CString currentItem = GetItemText(hItem);
-    int nImage, nSelectedImage;
-    GetItemImage(hItem, nImage, nSelectedImage);
-    if (nImage != 0) { // file
-        TVITEMW tvi;
-        hItem = GetChildItem(GetRootItem());// GetNextItem(TVI_ROOT, TVGN_CHILD);
-        while (hItem) {
-            CString itemText = GetItemText(hItem);
-            if (itemText == m_StartUpScript) {
-                tvi.mask = TVIF_STATE | TVIF_HANDLE;
-                tvi.hItem = hItem;
-                tvi.state = 0;
-                tvi.stateMask = TVIS_BOLD;
-                SetItem(&tvi);
-                break;
-            }
-            hItem = GetNextSiblingItem(hItem);// GetNextItem(hItem, TVGN_NEXT);
-        }
-        tvi.mask = TVIF_STATE | TVIF_HANDLE;
-        tvi.hItem = GetSelectedItem();
-        tvi.state = TVIS_BOLD;
-        tvi.stateMask = TVIS_BOLD;
-        SetItem(&tvi);
-        m_StartUpScriptDir = (LPWSTR)theApp.GetScriptDir();
-        m_StartUpScript = currentItem;
-        ::PostMessage(theApp.GetMainWnd()->GetSafeHwnd(), WM_ON_SET_STARTUP_SCRIPT, 0, 0);
-    }
+
+	HTREEITEM hItem = GetSelectedItem();
+
+	auto Item = m_Items.find(hItem);
+	if (Item != m_Items.end()) {
+		if (Item->second->GetType() == ENodeType::FILE) {
+			
+			ClearStartupScript(m_StartUpScripItemHandle);
+
+			TVITEMW tvi;
+			tvi.mask = TVIF_STATE | TVIF_HANDLE;
+			tvi.hItem = GetSelectedItem();
+			tvi.state = TVIS_BOLD;
+			tvi.stateMask = TVIS_BOLD;
+			SetItem(&tvi);
+			CString ScriptDir = Item->second->GetParentPath();
+			theApp.SetScriptDir(_bstr_t(ScriptDir));
+			m_StartUpScriptDir = ScriptDir;
+			m_StartUpScript = Item->second->GetName();
+			m_StartUpScripItemHandle = hItem;
+			::PostMessage(theApp.GetMainWnd()->GetSafeHwnd(), WM_ON_SET_STARTUP_SCRIPT, 0, 0);
+		}
+	}
 }
 
 void CFileTree::OnClearStartupScript() {
     HTREEITEM hItem = GetSelectedItem();
-    TVITEMW tvi;
-    tvi.mask = TVIF_STATE | TVIF_HANDLE;
-    tvi.hItem = hItem;
-    tvi.state = 0;
-    tvi.stateMask = TVIS_BOLD;
-    SetItem(&tvi);
-    m_StartUpScriptDir = "";
-    m_StartUpScript = "";
-    ::PostMessage(theApp.GetMainWnd()->GetSafeHwnd(), WM_ON_CLEAR_STARTUP_SCRIPT, 0, 0);
+	ClearStartupScript(hItem);
+}
+
+void CFileTree::ClearStartupScript(HTREEITEM ItemHandle)
+{
+	if (ItemHandle != nullptr) {
+		TVITEMW tvi;
+		tvi.mask = TVIF_STATE | TVIF_HANDLE;
+		tvi.hItem = ItemHandle;
+		tvi.state = 0;
+		tvi.stateMask = TVIS_BOLD;
+		SetItem(&tvi);
+		m_StartUpScriptDir = "";
+		m_StartUpScript = "";
+		m_StartUpScripItemHandle = nullptr;
+		::PostMessage(theApp.GetMainWnd()->GetSafeHwnd(), WM_ON_CLEAR_STARTUP_SCRIPT, 0, 0);
+	}
 }
 
 EXTENTION_TYPE CFileTree::GetExtentionType(CString &fileName) {
@@ -243,9 +370,9 @@ bool CFileTree::IsEnabledMenuItem(DWORD nID) {
         else {
             switch (nID) {
                 case ID_COMPILE:
-                    return GetExtentionType(currentItem) == EXT_TEXT_SCRIPT;
+                    return !scriptIsRunning && (GetExtentionType(currentItem) == EXT_TEXT_SCRIPT);
                 case ID_DECOMPILE:
-                    return GetExtentionType(currentItem) == EXT_BIN_SCRIPT;
+                    return !scriptIsRunning && (GetExtentionType(currentItem) == EXT_BIN_SCRIPT);
                 case ID_RUN:
                     break;
                 case ID_CLEAR_STARTUP_SCRIPT:
@@ -270,26 +397,14 @@ bool CFileTree::IsEnabledMenuItem(DWORD nID) {
     }
     return false;
 }
-//BOOL CFileTree::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
-//{
-//    // TODO: Add your specialized code here and/or call the base class
-//    bool enabled = true;
-//    switch (nID) {
-//        case ID_CLEAR_STARTUP_SCRIPT:
-//            enabled = false;
-//            break;
-//        case ID_SET_STARTUP_SCRIPT:
-//            enabled = true;
-//            break;
-//    }
-//    return enabled ? CTreeCtrl::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo) : 0;
-//}
 
 BOOL CFileTree::GetCurrentFile(CString &filePath) {
     if (HTREEITEM hItem = GetSelectedItem()) {
-        filePath = GetItemText(hItem);
-        filePath = theApp.GetScriptDir() + filePath;
-        return TRUE;
+		auto Item = m_Items.find(hItem);
+		if (Item != m_Items.end()) {
+			filePath = Item->second->GetPath();
+	        return TRUE;
+		}
     }
     return FALSE;
 }
@@ -299,7 +414,7 @@ void CFileTree::OnCompile() {
     if (GetCurrentFile(filePath)) {
         theApp.CompileScript(filePath);
         TODO("Compile script in a thread and then ReloadTree");
-        ReloadTree();
+		ReloadTree(GetParentItem(GetSelectedItem()));
     }
 }
 
@@ -309,6 +424,22 @@ void CFileTree::OnDecompile() {
     if (GetCurrentFile(filePath)) {
         theApp.DeCompileScript(filePath);
         TODO("Decompile script in a thread and then ReloadTree");
-        ReloadTree();
-    }
+		ReloadTree(GetParentItem(GetSelectedItem()));
+	}
+}
+
+
+void CFileTree::OnTvnItemexpanding(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
+	// TODO: Add your control notification handler code here
+	 
+	auto Item = m_Items.find(pNMTreeView->itemNew.hItem);
+	if (Item != m_Items.end()) {
+		if(pNMTreeView->action == TVE_EXPAND)
+			Item->second->OnExpand();
+		else
+			Item->second->OnCollaps();
+	}
+	*pResult = 0;
 }

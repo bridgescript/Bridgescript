@@ -132,15 +132,9 @@ IDR_TOOLBAR1            BITMAP                  "res\\toolbar1.bmp"
 
 IDB_BREAKPOINTS         BITMAP                  "res\\bitmap2.bmp"
 
-IDB_BITMAP2             BITMAP                  "res\\bmp00001.bmp"
-
 IDB_TREE_MARKERS        BITMAP                  "res\\bitmap3.bmp"
 
-IDB_BITMAP3             BITMAP                  "res\\bmp00002.bmp"
-
-IDB_BITMAP4             BITMAP                  "res\\bitmap4.bmp"
-
-IDB_BITMAP5             BITMAP                  "res\\bitmap5.bmp"
+IDB_MARKERS             BITMAP                  "res\\markers.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -146,9 +146,8 @@ BOOL CMFCApplication1App::InitInstance()
 
 	if (!pDocTemplate)
 		return FALSE;
-#ifdef RICH_EDIT
+
     pDocTemplate->SetContainerInfo(IDR_RichEditDocTestTYPE_CNTR_IP);
-#endif // RICH_EDIT
 
 	AddDocTemplate(pDocTemplate);
 
@@ -397,8 +396,9 @@ void CMFCApplication1App::OnCmdDebugStepout() {
 BOOL CMFCApplication1App::LoadScript() {
     if (!m_ScriptRunnerThread.GetThreadId()) {
         CMainFrame *pMainFrame = (CMainFrame*)m_pMainWnd;
+		if (!pMainFrame->IsStartUpScriptSet()) return FALSE;
         string scriptPath = (LPCSTR)_bstr_t(pMainFrame->GetStartUpScriptPath());
-        if (scriptPath.empty()) return FALSE;
+		if (scriptPath.empty()) return FALSE;
         StdOutInterface *pStdOutInterface = pMainFrame->GetStdOutInterface();
         pStdOutInterface->Clear();
         smart_ptr<ScriptRunner> spRunner(new ScriptRunner(scriptPath, pStdOutInterface));
@@ -556,7 +556,6 @@ void CMFCApplication1App::LoadDebuggerData() {
         m_xmlDebuggerData->put_preserveWhiteSpace(VARIANT_TRUE);
 
         m_xmlDebuggerData->put_async(VARIANT_FALSE);
-        //m_xmlDoc->put_setProperty(_bstr_t("SelectionLanguage"), _bstr_t("XPath"));
 
         VARIANT_BOOL res;
         hr = m_xmlDebuggerData->load(docPath, &res);

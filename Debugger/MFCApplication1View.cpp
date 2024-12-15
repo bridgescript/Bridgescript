@@ -154,22 +154,11 @@ int CMFCApplication1View::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMFCApplication1View::OnDebugRun() {
     // TODO: Add your command handler code here
-    //m_pRunner->Exec();
-    /*if (!m_ThreadScriptRunner.GetThreadId()) {
-    CFrameWnd *pFrame = GetParentFrame();
-
-    CMainFrame *pMainFrame = (CMainFrame*)pFrame->GetParentFrame();
-    m_ThreadScriptRunner.SetMainFrame(pMainFrame);
-    m_ThreadScriptRunner.Start(m_ScriptFileName);
-    }
-    Debugger::GetInstance().Run();*/
 }
 
 
 void CMFCApplication1View::OnDebugStop() {
     // TODO: Add your command handler code here
-    /*Debugger::GetInstance().Stop();
-    m_ThreadScriptRunner.Stop();*/
 }
 
 

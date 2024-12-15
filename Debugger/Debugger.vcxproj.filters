@@ -57,9 +57,6 @@
     <ClInclude Include="ScriptView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HTMLElemEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Script\Debugger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -85,12 +82,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JScriptExternal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IDispatchExImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="build.h">
@@ -137,9 +128,6 @@
     <ClCompile Include="ScriptView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HTMLElemEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Script\Debugger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -156,9 +144,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FileTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JScriptExternal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -289,6 +274,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\bitmap5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\markers.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

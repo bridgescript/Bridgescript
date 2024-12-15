@@ -57,8 +57,4 @@
 #include <atlcom.h>
 #include <atlctl.h>
 
-#define RICH_EDIT 1 // adding rich edit control and removing IE view
-
-#ifdef RICH_EDIT
 #include <afxrich.h>            // MFC rich edit classes
-#endif // RICH_EDIT

@@ -43,7 +43,6 @@ class CPropertiesWnd;
 
 class CVarList : public CListCtrl {
 protected:
-    //DECLARE_DYNCREATE(CVarList)
     DECLARE_MESSAGE_MAP()
     typedef enum Image_Type {
         IMG_COLLAPSED = 0,
@@ -80,7 +79,6 @@ protected:
     void SetVarTypeName(int row);
     void AppendNode(IMAGE_TYPE img);
     void UpdateImg(int item, int indent, IMAGE_TYPE img);
-    //MemoryBlockRef* QueryMemoryBlockRef(string &itemPath);
 
     Scope           *m_pScope;
     ui32            m_frameIdx;
@@ -89,11 +87,7 @@ protected:
         ItemDesc();
         ItemDesc& operator=(const ItemDesc& that);
     public:
-//#ifdef _DEBUG
         ItemDesc(string& itemPath, string& name, string& type, ThreadId threadId, ui32 stackFrame, ui32 varIdx, Type* pItemType);
-//#else // _DEBUG
-//        ItemDesc(string& itemPath, MemoryBlockRef *pMemoryBlockRef, ui32 offset, Type* pType);
-//#endif // _DEBUG
         ItemDesc(const ItemDesc& that);
         ~ItemDesc();
 
@@ -115,9 +109,6 @@ protected:
         ui32            m_stackFrame,
                         m_varIdx;
         string          m_itemPath;
-//#ifdef _DEBUG
-        //string          m_name;
-//#endif // _DEBUG
     };
     struct SubscriptCounter {
         struct _ {
@@ -168,39 +159,11 @@ public:
     void SetActive(ThreadId threadId);
     void SetSymbol(ThreadId threadId, _bstr_t location, _bstr_t line, _bstr_t file);
 
-    //void AddData(int row, int col, LPWSTR str, ui32 stackIdx);
-
     DECLARE_MESSAGE_MAP()
     afx_msg void OnNMClick(NMHDR *pNMHDR, LRESULT *pResult);
-
-private:
-    //ui32 GetThreadId();
-public:
-    //afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
-
-
-//class CWatchList : public CVarList {
-//public:
-//    CWatchList() {};
-//
-//    void Load();
-//    void Save();
-//    void LoadWatchList();
-//
-//    DECLARE_MESSAGE_MAP()
-//    afx_msg void OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult);
-//    afx_msg void OnLvnGetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
-//    afx_msg void OnLvnSetdispinfo(NMHDR *pNMHDR, LRESULT *pResult);
-//    afx_msg void OnLvnEndlabeledit(NMHDR *pNMHDR, LRESULT *pResult);
-//
-//protected:
-//    bool UpdateDebuggerData();
-//    void GetAllVariables(unordered_map<string, ui32> &vars);
-//};
-//
 class CStackList : public CListCtrl {
 public:
     CStackList() {};
@@ -212,8 +175,6 @@ public:
 
 private:
     ui32 GetThreadId();
-public:
-    //afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 /*********************************************/
@@ -257,10 +218,6 @@ public:
 private:
     COLORREF    m_defaultBkColor,
                 m_disabledBkColor;
-public:
-    //DECLARE_MESSAGE_MAP()
-    //afx_msg void OnSetFocus(CWnd* pOldWnd);
-    //afx_msg  LRESULT OnTabSetActive(WPARAM wParam, LPARAM lParam);
 };
 
 class CPropertiesWnd : public CDockablePane
@@ -275,26 +232,14 @@ public:
 public:
 	void SetVSDotNetLook(BOOL bSet)
 	{
-		//m_wndLocalVarList.SetVSDotNetLook(bSet);
-		//m_wndLocalVarsList.SetGroupNameFullWidth(bSet);
 	}
 
 protected:
-    //CMFCTabCtrl	m_tabsWnd;
     CTabs m_tabsWnd;
-
-	//CFont m_fntPropList;
-	//CComboBox m_wndObjectCombo;
-	//CPropertiesToolBar m_wndToolBar;
-    /*CMFCPropertyGridCtrl*///CValueGrid m_wndLocalVarsList;
-    //CListCtrl      m_wndStackList;
     CVarList        m_wndGlobalVarList;
     CThreadList     m_wndThreadList;
-    //CWatchList      m_wndWatchList;
     CBreakpointList m_wndBreakpointList;
     
-    //CDialog        m_dlg;
-    //CSplitterWnd   m_splitter;
     typedef struct TabHolder {
         CMFCTabCtrl	   *m_pTabsWnd;
         CSplitterWnd   *m_pSplitterWnd;
@@ -329,21 +274,10 @@ public:
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	//afx_msg void OnExpandAllProperties();
-	//afx_msg void OnUpdateExpandAllProperties(CCmdUI* pCmdUI);
-	//afx_msg void OnSortProperties();
-	//afx_msg void OnUpdateSortProperties(CCmdUI* pCmdUI);
-	//afx_msg void OnProperties1();
-	//afx_msg void OnUpdateProperties1(CCmdUI* pCmdUI);
-	//afx_msg void OnProperties2();
-	//afx_msg void OnUpdateProperties2(CCmdUI* pCmdUI);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
 
 	DECLARE_MESSAGE_MAP()
-
-	//void InitPropList();
-	//void SetPropListFont();
 public:
     void InitStackListHeader(CListCtrl &listCtrl);
     void ClearGlobalVarList();
@@ -375,8 +309,6 @@ private:
 
     CVarList::VIEW_AS_TYPE    m_viewAsType;
     bool                      m_viewAddress;
-    //int m_nComboHeight;
-    //afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 public:
     afx_msg void OnClose();
     afx_msg void OnDestroy();
