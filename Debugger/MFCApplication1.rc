@@ -829,7 +829,8 @@ LANGUAGE 9, 1
 #include "afxribbon.rc"        // MFC ribbon and control bar resources
 #endif
 #endif
-
+
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 

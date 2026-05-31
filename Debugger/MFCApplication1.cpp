@@ -13,6 +13,7 @@
 #include "MFCApplication1View.h"
 #include "ScriptView.h"
 #include <initguid.h>
+#include <shellscalingapi.h>
 //#include "MFCApplication1_i.c"
 
 
@@ -73,6 +74,7 @@ CMFCApplication1App::CMFCApplication1App()
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
+    SetProcessDpiAwareness(PROCESS_DPI_UNAWARE);
 }
 
 // The one and only CMFCApplication1App object
