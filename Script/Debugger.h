@@ -285,7 +285,7 @@ namespace script {
         virtual DebuggerState* Run();
         virtual DebuggerState* StepIn();
         virtual DebuggerState* StepOver();
-        virtual DebuggerState* SteOut();
+        virtual DebuggerState* StepOut();
     };
 
     class DebuggerStep : public DebuggerStepIn {

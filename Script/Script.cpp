@@ -143,7 +143,11 @@ bool ScriptRunner::Exec() {
 }
 
 EXTENTION_TYPE ScriptRunner::GetExtentionType() {
-    string ext = m_path.substr(m_path.find_last_of("."), m_path.length());
+    size_t dot = m_path.find_last_of(".");
+    if (dot == string::npos) {
+        return EXT_INVALID;
+    }
+    string ext = m_path.substr(dot);
     if (ext == EXT_TEXT_SCRIPT_STRING) {
         return EXT_TEXT_SCRIPT;
     }

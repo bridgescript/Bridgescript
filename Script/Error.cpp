@@ -195,7 +195,9 @@ void Error::Print(StdOutInterface *pStdOutInterface) {
         //printf("\n");
         //printf("%s(%lu): %s ERROR: %s, line: %lu, pos: %lu \n", m_errorFile, m_errorLine, m_errorFunction, m_errorStr/*, m_line, m_pos*/);
         string s = GetScriptLine(m_file, m_line);
-        s.pop_back();
+        if (!s.empty()) {
+            s.pop_back();
+        }
         ss << (char)218;
         printf("%c", 218);
         for (ui32 i = 0; i < s.length() + 2; ++i) {

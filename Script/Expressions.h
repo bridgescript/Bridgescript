@@ -2241,7 +2241,7 @@ namespace script {
 
         FOO_RETURN_METHOD PrepareReturnValue(vector<ui32> &data, Value &retValue);
         bool UnMarshalReturnValue(Memory &memory, FOO_RETURN_METHOD fooReturnMethod, ui32 regEAX, ui32 regEDX, Value &retValue, Value &outValue);
-        bool UnMarshalByValue(FOO_RETURN_METHOD fooReturnMethod, void *p, Type *pType, Value &retValue, Value &outValue);
+        bool UnMarshalByValue(FOO_RETURN_METHOD fooReturnMethod, void *p, ui32 regEDX, Type *pType, Value &retValue, Value &outValue);
         bool UnMarshalByRef(Memory &memory, void *p, Type *pType, Value &outValue);
         bool UnMarshalRefByRef(Memory &memory, void *p, Type *pType, Value &outValue);
     };

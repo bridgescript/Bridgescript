@@ -236,17 +236,17 @@ bool BinaryHeader::Load(ui8 *&pData, ui32 &size) {
     size -= m_scriptSignature.length();
     pData += m_scriptSignature.length();
 
-    if ((size < sizeof(ui16)) || (SCRIPT_MAJOR_VERSION < (ui16)*pData)) {
+    if ((size < sizeof(ui16)) || (SCRIPT_MAJOR_VERSION < *(ui16*)pData)) {
         return false;
     }
-    m_scriptMajorVersion = (ui16)*pData;
+    m_scriptMajorVersion = *(ui16*)pData;
     size -= sizeof(ui16);
     pData += sizeof(ui16);
 
-    if ((size < sizeof(ui16)) || (SCRIPT_MINOR_VERSION < (ui16)*pData)) {
+    if ((size < sizeof(ui16)) || (SCRIPT_MINOR_VERSION < *(ui16*)pData)) {
         return false;
     }
-    m_scriptMinorVersion = (ui16)*pData;
+    m_scriptMinorVersion = *(ui16*)pData;
     size -= sizeof(ui16);
     pData += sizeof(ui16);
 
@@ -7978,7 +7978,7 @@ break;
             return false;
     }
 
-    if (nextChar == '=') {
+    if ((nextChar == '=') && (type >= TYPE_ASSIGN) && (type <= TYPE_XOR)) {
         token.push_back(nextChar);
         type = (NODE_TYPE)(type + 1);
         ++posOffset;
@@ -8966,7 +8966,7 @@ bool BinarySerializer::WriteSymbol(SYMBOL_DESC &symDesc) {
             size = sizeof(ui8) * 3;
         }
         else if (symDesc.m_symId <= BINARY_STREAM_FOUR_BYTE_MAX) {
-            pData[0] = THREE | (ui8)(symDesc.m_symId >> 24);
+            pData[0] = FOUR | (ui8)(symDesc.m_symId >> 24);
             pData[1] = (ui8)(symDesc.m_symId >> 16);
             pData[2] = (ui8)(symDesc.m_symId >> 8);
             pData[3] = (ui8)symDesc.m_symId;

@@ -246,7 +246,7 @@ DebuggerState* DebuggerStepIn::StepOver() {
     return this;
 }
 
-DebuggerState* DebuggerStepIn::SteOut() {
+DebuggerState* DebuggerStepIn::StepOut() {
     return this;
 }
 
