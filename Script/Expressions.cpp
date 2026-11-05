@@ -1071,6 +1071,15 @@ inline double Value::GetDouble() {
 }
 
 inline bool Value::GetBool() {
+    // floats must not be truncated through ui64: 0.5 is true
+    switch (m_type) {
+        case FLOAT_TYPE:
+            return GetFloat() != 0.0f;
+        case DOUBLE_TYPE:
+            return GetDouble() != 0.0;
+        default:
+            break;
+    }
     return GetValue<ui64, bool(*)(const string&)>(Value::S2BOOL) != 0;
 }
 
@@ -8335,7 +8344,7 @@ bool FunctionPtr::UnMarshalReturnValue(Memory &memory, FOO_RETURN_METHOD fooRetu
         case Type::BY_REF_TO_REF: 
             return UnMarshalRefByRef(memory, (void*)regEAX, pRetType, outValue);
         case Type::BY_VALUE:
-            return UnMarshalByValue(fooReturnMethod, (void*)regEAX, pRetType, retValue, outValue);
+            return UnMarshalByValue(fooReturnMethod, (void*)regEAX, regEDX, pRetType, retValue, outValue);
             break;
         default:
             assert(0);
@@ -8343,19 +8352,25 @@ bool FunctionPtr::UnMarshalReturnValue(Memory &memory, FOO_RETURN_METHOD fooRetu
     }
 }
 
-bool FunctionPtr::UnMarshalByValue(FOO_RETURN_METHOD fooReturnMethod, void *p, Type *pType, Value &retValue, Value &outValue) {
+bool FunctionPtr::UnMarshalByValue(FOO_RETURN_METHOD fooReturnMethod, void *p, ui32 regEDX, Type *pType, Value &retValue, Value &outValue) {
     switch (fooReturnMethod) {
-        case REG_EAX:
+        case REG_EAX: {
             outValue.SetType(pType->GetValueType(), pType);
-            *(ui32*)outValue.GetRaw() = (ui32)p;
+            // copy only the value's size: 1 and 2 byte blocks must not receive all of EAX
+            ui32 size = pType->GetTypeSize();
+            if (size > sizeof(ui32)) {
+                size = sizeof(ui32);
+            }
+            memcpy(outValue.GetRaw(), &p, size);
             break;
+        }
         case REG_EAX_EDX: {
             // must unmarshal pointer to function!
             // check if if it's an aggregate type then unmarsal foo ptr if any!
             outValue.SetType(pType->GetValueType(), pType);
             ui32 *pOut = (ui32*)outValue.GetRaw();
             *pOut = (ui32)p;
-            *(pOut + 1) = (ui32)p;
+            *(pOut + 1) = regEDX;
             break;
         }
         case POINTER_EAX: // regEAX cab be ignored, regEAX == retValue->m_pMemoryBlock->m_pMemory
@@ -10167,7 +10182,7 @@ bool OperatorBitNot::IsExpression(Type *&pReturnType, PrePostExpressions *&pPreP
 }
 
 bool OperatorBitNot::IsApplicable(Type *pLeftType, Type *pRightType) {
-    return IsApplicableFixed(pLeftType, pRightType);
+    return IsApplicableFixed(pRightType, pRightType);
 }
 
 /*************************************************************/
